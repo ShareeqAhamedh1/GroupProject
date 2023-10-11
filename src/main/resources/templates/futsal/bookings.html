@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<!--
+	Hielo by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Bookings</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/futsal/css/style.css" />
+</head>
+<body class="subpage">
+
+	<!-- Header -->
+	<header id="header">
+		<div class="logo">
+			<a href="home">Futsal.lk <span>by AccodeMe</span></a>
+		</div>
+		<a href="#menu">Menu</a>
+	</header>
+
+	<!-- Nav -->
+	<nav id="menu">
+		<ul class="links">
+			<li><a href="home">Home</a></li>
+			<li><a href="bookings">Booking</a></li>
+			<li><a href="about_us">About us</a></li>
+			<li><a href="login">Log In</a></li>
+		</ul>
+	</nav>
+
+	<!-- One -->
+	<section id="One" class="wrapper style3">
+		<div class="inner">
+			<header class="align-center">
+				<p>Ready to embark on your adventure? Secure your spot now with just a few clicks!</p>
+				<h2>Book Now</h2>
+			</header>
+		</div>
+	</section>
+
+	<!-- Main -->
+	<div id="main" class="container">
+
+		<!-- Elements -->
+		
+		<div class="row 200%">
+			<div class="6u 12u$(medium)">
+
+				<form action="process_booking" >
+					<label>Name:</label> <input type="text" id="name" name="name"
+						required> <br> 
+						
+						<label for="sport">Select Sport:</label> <select id="sport" name="sport" required>
+						<option value="" disabled selected>Select a sport</option>
+						<option value="basketball">Basketball</option>
+						<option value="soccer">Soccer</option>
+						<option value="volleyball">Volleyball</option>
+						<!-- Add more sport options here -->
+					</select><br> 
+					
+					<label for="place">Select a Place:</label> <select id="place" name="place" required>
+						<option value="" disabled selected>Select a place</option>
+						<option value="1">Kandy</option>
+						<option value="2">Gampola</option>
+						<option value="3">Kahatapitya</option>
+						<!-- Add more sport options here -->
+					</select><br>
+					
+					<label for="date">Date:</label> 
+					<input type="date">
+					<br>
+					<br>
+					<br>
+					
+					<label for="time">Time:</label> <select id="time"
+						required>
+						<option value="" disabled selected>Select a time</option>
+					</select> <br> <br> <br> 
+					<button type="submit">Book Now</button>
+				</form>
+
+
+			</div>
+			<div class="6u$ 12u$(medium)">
+			
+		
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Footer -->
+	<footer id="footer">
+		<div class="container">
+			<ul class="icons">
+				<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+				<li><a href="#" class="icon fa-facebook"><span
+						class="label">Facebook</span></a></li>
+				<li><a href="#" class="icon fa-instagram"><span
+						class="label">Instagram</span></a></li>
+				<li><a href="#" class="icon fa-envelope-o"><span
+						class="label">Email</span></a></li>
+			</ul>
+		</div>
+	</footer>
+
+	<div class="copyright">
+		Made with <a href="https://templated.co/">Templated</a>.
+	</div>
+
+
+
+	<!-- Scripts -->
+	<script src="/futsal/js/jquery.min.js"></script>
+	<script src="/futsal/js/jquery.scrollex.min.js"></script>
+	<script src="/futsal/js/skel.min.js"></script>
+	<script src="/futsal/js/util.js"></script>
+	<script src="/futsal/js/main.js"></script>
+
+<script>
+// Function to populate time options with 1-hour gap
+function populateTimeOptions() {
+    const timeSelect = document.getElementById("time");
+    timeSelect.innerHTML = "<option value='' disabled selected>Select a time</option>";
+    
+    const startTime = 8; // Starting hour (8 AM)
+    const endTime = 21;  // Ending hour (9 PM)
+
+    for (let hour = startTime; hour <= endTime; hour++) {
+        timeSelect.innerHTML += `<option value="${hour}">${hour}:00 - ${hour+1}:00</option>`;
+    }
+}
+
+// Call the function initially to populate time options
+populateTimeOptions();
+
+// Event listener to dynamically update time options when the date changes (optional)
+const dateInput = document.getElementById("date");
+dateInput.addEventListener("change", () => {
+    populateTimeOptions();
+});
+</script>
+
+</body>
+</html>

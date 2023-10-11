@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+    <!-- https://bootsnipp.com/snippets/yN75G -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+
+ <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"  id="bootstrap-css">
+ <link rel="stylesheet" type="text/css" th:href="@{/css/sms/all.css}">
+ <link th:href="@{/css/style.css}" rel="stylesheet">
+
+<!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+
+<title>LECO</title>
+</head>
+<body>
+
+
+<div class="wrapper">
+  <div id="formContent">
+    <!-- Tabs Titles  https://bootsnipp.com/snippets/yN75G -->
+
+    <!-- Icon -->
+    <div>
+      <img th:src="@{/img/sms/SMS.png}" id="icon" alt="User Icon" />
+      <h2>LECO SMS Service</h2>
+    </div>
+
+    <!-- Login Form -->
+    <form th:object="${frmSMS}" method="post" th:action="@{/sms/acc-new-reg}" id="form1" >
+      <input readonly id="t" required type="text"  th:name="accNo" th:field="*{accountNumber}" placeholder="Account No"/>
+      <input id="txtMob" required type="text"  th:name="mobileNo"  th:field="*{mobilenumber}"  oninput="validateNo()"  maxlength="9"  placeholder="Mobile No (771122330)"> 
+      <p id="msg"></p>
+<!--        <input class="btn  btn-success col-md-2" type="submit"value="Register">
+      <input class="btn  btn-warning col-md-1"type="submit"value="Register"> -->
+
+<button disabled type="submit" class="btn btn-primary" id="btnReg"  onclick="this.form.submit(); this.disabled = true; this.value = 'Submitting the form';"   style="margin-bottom: 10px"  >REGISTER</button>
+
+    </form>
+
+
+
+  </div>
+</div>
+
+
+      <script th:src="@{/js/main.js}"></script>
+      <script type="text/javascript">
+      
+      
+      function validateNo() {
+    	  var x = document.getElementById("txtMob").value;
+          var regx = /^\d{9}$/ ;
+    	  
+    	  
+    	 // if (x == "123") {
+    		if(regx.test(x)) {
+      		  document.getElementById("btnReg").disabled = false;
+    		  document.getElementById("msg").innerHTML = "Valid Mobile no: " + x;
+    	  } else {
+
+    		  document.getElementById("btnReg").disabled = true;
+    		  document.getElementById("msg").innerHTML = "Invalid Mobile no: " + x;
+    	  }
+    	}
+
+      $(document).ready(function(){    
+   	   
+    	  
+      });
+       
+       
+     </script>
+
+</body>
+
+</html>

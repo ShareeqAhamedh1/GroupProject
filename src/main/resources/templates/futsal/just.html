@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+
+<script type="text/javascript">
+	function display(form) {
+		var name=form.myName.value;
+		
+		if(name==""){
+			alert("insert Name");
+		}else{
+		alert("Your name :"+name);
+		}
+		}
+</script>
+</head>
+<body>
+
+	<form name="myForm" action="">
+		Enter Your Name:
+		<input type="text" name="myName" value="" required><br>
+		<input type="button" name="button"  value="Click Me" onclick="display(this.form)">
+	</form>
+
+</body>
+</html>

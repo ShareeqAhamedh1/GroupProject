@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+    <!-- https://bootsnipp.com/snippets/yN75G -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+
+ <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"  id="bootstrap-css">
+ <link rel="stylesheet" type="text/css" th:href="@{/css/sms/all.css}">
+ <link th:href="@{/css/style.css}" rel="stylesheet">
+
+<!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+
+<title>LECO</title>
+</head>
+<body>
+
+
+<div class="wrapper">
+  <div id="formContent">
+    <!-- Tabs Titles  https://bootsnipp.com/snippets/yN75G -->
+
+    <!-- Icon -->
+    <div>
+      <img th:src="@{/img/email/email.png}" id="icon" alt="User Icon" style="padding-top: 20px"/>
+      <h1>LECO e-Billing Service</h1>
+    </div>
+
+    <!-- Login Form -->
+    <form th:object="${frmEbillAcc}" method="post" th:action="@{/ebill/acc-confirm}">
+      <input id="t" readonly="readonly" type="text"  th:name="accNo" th:field="*{accountNo}" placeholder="Account No"/>
+      <input id="n" readonly="readonly" type=text  th:name="emailAdd"  th:field="*{email}"  placeholder="Mobile No (771122330)"> 
+	  <h2>Dear Customer , Please confirm your email address.</h2>
+
+<button type="submit" class="btn btn-success" style="margin-bottom: 10px"  >CONFIRM</button>
+<p class="text-info" >Copyright @ 2021, LECO. All rights reserved. </p>
+    </form>
+
+
+
+  </div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+    <!-- https://bootsnipp.com/snippets/yN75G -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+
+ <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"  id="bootstrap-css">
+ <link rel="stylesheet" type="text/css" th:href="@{/css/sms/all.css}">
+ <link th:href="@{/css/style.css}" rel="stylesheet">
+
+<!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+
+<title>LECO</title>
+</head>
+<body>
+
+
+<div class="wrapper">
+  <div id="formContent">
+    <!-- Tabs Titles  https://bootsnipp.com/snippets/yN75G -->
+
+    <!-- Icon -->
+    <div>
+      <img th:src="@{/img/email/email.png}" id="icon" alt="User Icon"  style="padding-top: 20px"/>
+         <h1>LECO e-Billing Service</h1>
+    </div>
+
+    <!-- Login Form -->
+    <form th:object="${frmEbillAcc}" class="fadeIn first">
+      <input disabled type="text" id="login"  name="login" th:field="*{accountNo}" placeholder="Account No">
+      <input disabled type="text" id="password"  name="loginpw"  th:field="*{email}" placeholder="Mobile No"> 
+      <p class="text-warning" th:if="${failedReg}"> Confirmation failed , please try again later.  </p>
+      <p class="text-success" th:if="${newReg}"> Successfully confirmed your email to LECO e-Billing Service.  </p>
+      <p class="text-success" th:if="${oldReg}"> Email Already Confirmed...Thank you  </p>
+    </form>
+
+
+
+  </div>
+</div>
+</body>
+
+</html>
