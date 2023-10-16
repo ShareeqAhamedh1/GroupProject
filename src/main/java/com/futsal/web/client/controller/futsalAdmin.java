@@ -1,5 +1,8 @@
 package com.futsal.web.client.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.futsal.web.client.models.AdminDetails;
+import com.futsal.web.client.services.FutsalAdminService;
 
 
 @Controller
@@ -76,7 +80,7 @@ public class futsalAdmin {
 		if (!password.equals(rePassword)) {
 			
 			model.addAttribute("passwordNotMatching",Boolean.TRUE);
-			return "redirect:signup";
+			return "futsal/admin/signup.html";
 		}
 		
 		AdminDetails a_details=new AdminDetails();
@@ -90,7 +94,7 @@ public class futsalAdmin {
 		
 		System.out.println("Admin details :  "+a_details.toString());
 		
-		
+		List<Map<String, Object>> RegisterAdmin=FutsalAdminService.getAdminDetails(a_details);
 		
 		return "redirect:/adminDashboard/signin";
 	}
