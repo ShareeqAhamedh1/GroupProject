@@ -24,7 +24,7 @@ import org.springframework.web.client.RestTemplate;
 @Controller
 @SpringBootApplication
 
-public class LecoWebLinksNewApplication{
+public class FutsalWebLinksNewApplication{
 
 
 	
@@ -41,7 +41,7 @@ public class LecoWebLinksNewApplication{
 
 	
 	public static void main(String[] args) {
-		SpringApplication.run(LecoWebLinksNewApplication.class, args);
+		SpringApplication.run(FutsalWebLinksNewApplication.class, args);
 	}
 
 	/*

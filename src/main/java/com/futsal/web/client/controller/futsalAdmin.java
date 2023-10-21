@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.futsal.web.client.models.AdminDetails;
 import com.futsal.web.client.services.FutsalAdminService;
@@ -75,7 +76,7 @@ public class futsalAdmin {
             @RequestParam("contactNo") String contactNo,
             @RequestParam("email") String email,
             @RequestParam("password") String password,
-            @RequestParam("rePassword") String rePassword ,ModelMap model) {
+            @RequestParam("rePassword") String rePassword ,ModelMap model,RedirectAttributes redAt) {
 		
 		if (!password.equals(rePassword)) {
 			
@@ -94,9 +95,35 @@ public class futsalAdmin {
 		
 		System.out.println("Admin details :  "+a_details.toString());
 		
-		List<Map<String, Object>> RegisterAdmin=FutsalAdminService.getAdminDetails(a_details);
+		List<Map<String,Object>> CheckAdmins=FutsalAdminService.adminDetails(a_details);
+	
+		if (CheckAdmins != null) {
+		    boolean isAdminFound = CheckAdmins.stream()
+		            .anyMatch(adminCheck ->
+		                adminCheck.get("email").toString().equals(a_details.getEmail())
+		            );
+
+		    	System.out.println(isAdminFound);
+		    if (isAdminFound) {
+		        System.out.println("Admin already registered");
+		        model.addAttribute("adminExisted", Boolean.TRUE);
+		        return "redirect:/adminDashboard/signin";
+		    } 
+		    else {
+		    	System.out.println("Admin Registered");
+		        List<Map<String, Object>> RegisterAdmin = FutsalAdminService.getAdminDetails(a_details);
+		        model.addAttribute("adminCreated", Boolean.TRUE);
+		        return "redirect:/adminDashboard/signin";
+		    }
+		} else {
+			System.out.println("Admin Registered");
+	        List<Map<String, Object>> RegisterAdmin = FutsalAdminService.getAdminDetails(a_details);
+	        model.addAttribute("adminCreated", Boolean.TRUE);
+	        return "redirect:/adminDashboard/signin";
+		}
+
 		
-		return "redirect:/adminDashboard/signin";
+		
 	}
 	
 	@GetMapping("/404")

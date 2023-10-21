@@ -21,7 +21,21 @@ public class FutsalAdminService {
 	
 	
 	public static List<Map<String, Object>> getAdminDetails(AdminDetails admin){
-		System.out.println();
+		System.out.println("Im in AdminService class with the data: "+admin.toString());
+		String sql="INSERT INTO futsaldb.admindetails (adminname,email,contactno,password,repassword) VALUES (?,?,?,?,?)";
+		int insertedDataRows=jdbcTemplate.update(sql,admin.getAdminName(),admin.getEmail(),admin.getContactNo(),admin.getPassword(),admin.getRePassword());
+		System.out.println("inserted "+insertedDataRows+" admin datas into Admin Details in DB");
 		return null;
+	}
+	
+	
+	public static List<Map<String,Object>> adminDetails(AdminDetails admin){
+		System.out.println("Checking Email of "+admin.getEmail());
+		System.out.println("Getting admin details");
+		String sql = "SELECT * FROM futsaldb.admindetails WHERE email LIKE ?";
+		
+		 List<Map<String, Object>> getDetailsFromDb = jdbcTemplate.queryForList(sql, "%" + admin.getEmail());
+//		System.out.println("Checked and got "+checkedDataRows+" Rows from the admin DB");
+		return getDetailsFromDb;
 	}
 }

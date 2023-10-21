@@ -61,6 +61,11 @@ public class futsalController {
 		ModelAndView signup=new ModelAndView("futsal/signup.html");
 		return signup;
 	}
+	@GetMapping("/myprofile")
+	public ModelAndView myprofile(ModelMap model) {
+		ModelAndView myprofile=new ModelAndView("futsal/myprofile.html");
+		return myprofile;
+	}
 	
 	@PostMapping("/registration")
 	public String signup(@RequestParam("username") String username,

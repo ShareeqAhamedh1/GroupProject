@@ -75,3 +75,11 @@
 	display: inline-block;
 	margin: 100px auto;
 }
+
+.boxes{
+	color:red;
+	background-color: #3CC621;
+}
+#box_2{
+	background-color: black;
+}
