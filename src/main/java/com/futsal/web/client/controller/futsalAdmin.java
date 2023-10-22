@@ -33,11 +33,7 @@ public class futsalAdmin {
 		ModelAndView home=new ModelAndView("futsal/admin/index.html");
 		return home;
 	}
-	@GetMapping("/widget")
-	public ModelAndView widget(ModelMap model) {
-		ModelAndView widget=new ModelAndView("futsal/admin/widget.html");
-		return widget;
-	}
+	
 	@GetMapping("/form")
 	public ModelAndView form(ModelMap model) {
 		ModelAndView form=new ModelAndView("futsal/admin/form.html");
@@ -137,19 +133,7 @@ public class futsalAdmin {
 		ModelAndView blank=new ModelAndView("futsal/admin/blank.html");
 		return blank;
 	}
-	@GetMapping("/button")
-	public ModelAndView button(ModelMap model) {
-		ModelAndView button=new ModelAndView("futsal/admin/button.html");
-		return button;
-	}
-	@GetMapping("/typography")
-	public ModelAndView typography(ModelMap model) {
-		ModelAndView typography=new ModelAndView("futsal/admin/typography.html");
-		return typography;
-	}
-	@GetMapping("/element")
-	public ModelAndView element(ModelMap model) {
-		ModelAndView element=new ModelAndView("futsal/admin/element.html");
-		return element;
-	}
+	
+	
+	
 }
