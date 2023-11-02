@@ -96,6 +96,7 @@ public class futsalController {
 	    
 	    // Example: Print the form data
 		
+		// example test 1
 		UserDetails u_details=new UserDetails();
 		u_details.setUserName(username);
 		u_details.setAddress(email);
