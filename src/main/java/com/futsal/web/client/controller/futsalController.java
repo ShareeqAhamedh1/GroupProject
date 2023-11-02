@@ -3,16 +3,20 @@ package com.futsal.web.client.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.module.kotlin.ReflectionCache.BooleanTriState.False;
 import com.futsal.web.client.models.UserDetails;
 import com.futsal.web.client.services.FutsalServices;
 
@@ -56,11 +60,24 @@ public class futsalController {
 		return login;
 	}
 	
+	
 	@GetMapping("/signup")
-	public ModelAndView signup(ModelMap model) {
-		ModelAndView signup=new ModelAndView("futsal/signup.html");
-		return signup;
+	public ModelAndView signup(ModelMap model, @RequestAttribute(name = "passwordNotMatching", required = false) String passwordNotMatching) {
+	    ModelAndView signup = new ModelAndView("futsal/signup.html");
+	    
+//	    if (passwordNotMatching != null) {
+//	        // Add the attribute to the model if it exists
+//	    	model.addAttribute("passwordMatching", Boolean.TRUE);
+//	       
+//	    }else {
+//	    	 model.addAttribute("passwordNotMatching", Boolean.TRUE);
+//	    }
+//
+	    return signup;
 	}
+		
+		
+	
 	@GetMapping("/myprofile")
 	public ModelAndView myprofile(ModelMap model) {
 		ModelAndView myprofile=new ModelAndView("futsal/myprofile.html");
@@ -74,7 +91,7 @@ public class futsalController {
 	                     @RequestParam("contactNo") String contactNo,
 	                     @RequestParam("email") String email,
 	                     @RequestParam("pass") String password,
-	                     @RequestParam("repass") String rePassword) {
+	                     @RequestParam("repass") String rePassword,ModelMap model,HttpSession session) {
 	    // Process the form data here
 	    
 	    // Example: Print the form data
@@ -88,10 +105,29 @@ public class futsalController {
 		u_details.setPassword(rePassword);
 		u_details.setRePassword(rePassword);
 		
+		if (!password.equals(rePassword)) {
+			
+//			session.setAttribute("passwordNotMatching",Boolean.TRUE);
+			model.addAttribute("passwordNotMatching",Boolean.TRUE);
+			 return "redirect:/futsal_home/signup";
+		 } 
+		
 		
 	    System.out.println(u_details.toString());
 	    
+	    List<Map<String,Object>> checkUsers=FutsalServices.getUserDetails(u_details);
+	    
+	    if(checkUsers !=null) {
+	    	boolean isUserFound = checkUsers.stream()
+	    			.anyMatch(userCheck ->
+	    				userCheck.get("email").toString().equals(u_details.getAddress())
+	    					);
+	    	System.out.println(isUserFound);
+	    }
+	    
 	    List<Map<String,Object>> RegisterUser= FutsalServices.getUserDetails(u_details);
+	    
+	   
 	    
 	    // You can add your logic here, such as user registration
 	    
@@ -123,6 +159,7 @@ public class futsalController {
 		if (isUserFound) {
 		    System.out.println("User found with email: " + user.getAddress());
 		    model.addAttribute("UserFound",Boolean.TRUE);
+		    model.addAttribute("loggedIn",Boolean.TRUE);
 		    return "redirect:/futsal_home/home";
 		} else {
 		    System.out.println("User not found with email: " + user.getAddress());
