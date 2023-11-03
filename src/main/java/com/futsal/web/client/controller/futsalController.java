@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,8 +56,11 @@ public class futsalController {
 	}
 	
 	@GetMapping("/login")
-	public ModelAndView login(ModelMap model) {
-		ModelAndView login=new ModelAndView("futsal/login2.html");
+	public ModelAndView login(@RequestParam(name = "UserExist", required = false, defaultValue = "false") String userExist, ModelMap model) {
+		ModelAndView login = new ModelAndView("futsal/login2.html");
+	    
+	    // Use the "userExist" parameter as needed in your login page logic
+	    model.addAttribute("UserExist", userExist);
 		return login;
 	}
 	
@@ -113,13 +117,16 @@ public class futsalController {
 			 return "redirect:/futsal_home/signup";
 		 } 
 		
-		
 	    System.out.println(u_details.toString());
 	    
-	    List<Map<String,Object>> checkUsers=FutsalServices.getUserDetails(u_details);
+	    List<Map<String, Object>> checkUser=FutsalServices.validateUser(u_details);
 	    
-	    if(checkUsers !=null) {
-	    	boolean isUserFound = checkUsers.stream()
+	    if (checkUser == null) {
+			
+	    List<Map<String,Object>> addUsers=FutsalServices.getUserDetails(u_details);
+	    
+	    if(addUsers !=null) {
+	    	boolean isUserFound = addUsers.stream()
 	    			.anyMatch(userCheck ->
 	    				userCheck.get("email").toString().equals(u_details.getAddress())
 	    					);
@@ -133,6 +140,13 @@ public class futsalController {
 	    // You can add your logic here, such as user registration
 	    
 	    return "redirect:/futsal_home/login"; // Redirect to a success page
+	    
+	    }else {
+	    	
+	    	 model.addAttribute("UserExist", Boolean.TRUE);
+	         return "redirect:/futsal_home/login?UserExist=true"; // Redirect to the login page with a parameter
+	     
+	    }
 	}
 	
 	@GetMapping("/process_booking")
