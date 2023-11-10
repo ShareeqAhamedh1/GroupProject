@@ -95,59 +95,56 @@ public class futsalController {
 	                     @RequestParam("contactNo") String contactNo,
 	                     @RequestParam("email") String email,
 	                     @RequestParam("pass") String password,
-	                     @RequestParam("repass") String rePassword,ModelMap model,HttpSession session) {
+	                     @RequestParam("repass") String rePassword,
+	                     ModelMap model, HttpSession session) {
+
 	    // Process the form data here
-	    
+
 	    // Example: Print the form data
-		
-		// example test 1
-		UserDetails u_details=new UserDetails();
-		u_details.setUserName(username);
-		u_details.setAddress(email);
-		u_details.setContactNo(contactNo);
-		u_details.setFirstName(firstName);
-		u_details.setLastName(lastName);
-		u_details.setPassword(rePassword);
-		u_details.setRePassword(rePassword);
-		
-		if (!password.equals(rePassword)) {
-			
-//			session.setAttribute("passwordNotMatching",Boolean.TRUE);
-			model.addAttribute("passwordNotMatching",Boolean.TRUE);
-			 return "redirect:/futsal_home/signup";
-		 } 
-		
+	    System.out.println("Username: " + username);
+	    System.out.println("First Name: " + firstName);
+	    System.out.println("Last Name: " + lastName);
+	    System.out.println("Contact No: " + contactNo);
+	    System.out.println("Email: " + email);
+	    System.out.println("Password: " + password);
+	    System.out.println("Re-entered Password: " + rePassword);
+
+	    // Example test 1
+	    UserDetails u_details = new UserDetails();
+	    u_details.setUserName(username);
+	    u_details.setAddress(email);
+	    u_details.setContactNo(contactNo);
+	    u_details.setFirstName(firstName);
+	    u_details.setLastName(lastName);
+	    u_details.setPassword(password);
+	    u_details.setRePassword(rePassword);
+
+	    if (!password.equals(rePassword)) {
+	        model.addAttribute("passwordNotMatching", Boolean.TRUE);
+	        return "redirect:/futsal_home/signup";
+	    }
+
 	    System.out.println(u_details.toString());
-	    
-	    List<Map<String, Object>> checkUser=FutsalServices.validateUser(u_details);
-	    
-	    if (checkUser == null) {
-			
-	    List<Map<String,Object>> addUsers=FutsalServices.getUserDetails(u_details);
-	    
-	    if(addUsers !=null) {
-	    	boolean isUserFound = addUsers.stream()
-	    			.anyMatch(userCheck ->
-	    				userCheck.get("email").toString().equals(u_details.getAddress())
-	    					);
-	    	System.out.println(isUserFound);
+
+	    List<Map<String, Object>> checkUser = FutsalServices.validateUser(u_details);
+
+	    if (checkUser != null) {
+	        model.addAttribute("UserExist", Boolean.TRUE);
+	        return "redirect:/futsal_home/login?UserExist=true";
 	    }
-	    
-	    List<Map<String,Object>> RegisterUser= FutsalServices.getUserDetails(u_details);
-	    
-	   
-	    
+
+	    List<Map<String, Object>> addUsers = FutsalServices.getUserDetails(u_details);
+
+	    if (addUsers != null) {
+	        boolean isUserFound = addUsers.stream()
+	                .anyMatch(userCheck -> userCheck.get("email").toString().equals(u_details.getAddress()));
+	        System.out.println(isUserFound);
+	    }
+
 	    // You can add your logic here, such as user registration
-	    
 	    return "redirect:/futsal_home/login"; // Redirect to a success page
-	    
-	    }else {
-	    	
-	    	 model.addAttribute("UserExist", Boolean.TRUE);
-	         return "redirect:/futsal_home/login?UserExist=true"; // Redirect to the login page with a parameter
-	     
-	    }
 	}
+
 	
 	@GetMapping("/process_booking")
 	public ModelAndView process_booking(ModelMap model) {

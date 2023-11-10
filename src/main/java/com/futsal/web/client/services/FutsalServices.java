@@ -31,12 +31,17 @@ public class FutsalServices {
 		 
 	 }
 	 
-	 public static List<Map<String,Object>> validateUser(UserDetails user){
-		 System.out.println("Searching User In ValidateUSerService:"+user.getAddress());
-		 String sql="SELECT * FROM futsaldb.userdetails WHERE Email LIKE ?";
-		 List<Map<String, Object>> getDetailsFromDb=jdbcTemplate.queryForList(sql,"%"+user.getAddress()+"%");
-		 return getDetailsFromDb;
-	 }
+	 public static List<Map<String, Object>> validateUser(UserDetails user) {
+		    System.out.println("Searching User In ValidateUserService: " + user.getAddress());
+
+		    String sql = "SELECT * FROM futsaldb.userdetails WHERE Email LIKE ?";
+		    
+		    List<Map<String, Object>> userDetailsFromDb = jdbcTemplate.queryForList(sql, "%" + user.getAddress() + "%");
+
+		    // Check if userDetailsFromDb is empty, return null if true
+		    return userDetailsFromDb.isEmpty() ? null : userDetailsFromDb;
+		}
+
 	 
 	 public static List<Map<String, Object>> sendUserDetails(UserDetails user) {
 		    System.out.println("Searching " + user.getAddress() + " in DB");
