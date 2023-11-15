@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,9 @@ import com.futsal.web.client.services.FutsalServices;
 @Controller
 @RequestMapping("futsal_home")
 public class futsalController {
+	
+	  @Autowired
+	    private PasswordEncoder passwordEncoder;
 
 	@GetMapping("/")
 	@ResponseBody
@@ -56,11 +61,12 @@ public class futsalController {
 	}
 	
 	@GetMapping("/login")
-	public ModelAndView login(@RequestParam(name = "UserExist", required = false, defaultValue = "false") String userExist, ModelMap model) {
+	public ModelAndView login(@RequestParam(name = "UserExist", required = false, defaultValue = "false") String userExist,@RequestParam(name = "UserCreated", required = false, defaultValue = "false") String UserCreated, ModelMap model) {
 		ModelAndView login = new ModelAndView("futsal/login2.html");
 	    
 	    // Use the "userExist" parameter as needed in your login page logic
 	    model.addAttribute("UserExist", userExist);
+	    model.addAttribute("UserCreated", UserCreated);
 		return login;
 	}
 	
@@ -98,9 +104,7 @@ public class futsalController {
 	                     @RequestParam("repass") String rePassword,
 	                     ModelMap model, HttpSession session) {
 
-	    // Process the form data here
-
-	    // Example: Print the form data
+	    
 	    System.out.println("Username: " + username);
 	    System.out.println("First Name: " + firstName);
 	    System.out.println("Last Name: " + lastName);
@@ -109,7 +113,7 @@ public class futsalController {
 	    System.out.println("Password: " + password);
 	    System.out.println("Re-entered Password: " + rePassword);
 
-	    // Example test 1
+	 
 	    UserDetails u_details = new UserDetails();
 	    u_details.setUserName(username);
 	    u_details.setAddress(email);
@@ -119,12 +123,19 @@ public class futsalController {
 	    u_details.setPassword(password);
 	    u_details.setRePassword(rePassword);
 
+	    
+	    String hashedPassword = passwordEncoder.encode(password);
+	    String hashedRePassword = passwordEncoder.encode(rePassword);
+	    
 	    if (!password.equals(rePassword)) {
 	        model.addAttribute("passwordNotMatching", Boolean.TRUE);
 	        return "redirect:/futsal_home/signup";
 	    }
 
 	    System.out.println(u_details.toString());
+	    
+	    u_details.setPassword(hashedPassword);
+	    u_details.setRePassword(hashedRePassword);
 
 	    List<Map<String, Object>> checkUser = FutsalServices.validateUser(u_details);
 
@@ -142,7 +153,7 @@ public class futsalController {
 	    }
 
 	    // You can add your logic here, such as user registration
-	    return "redirect:/futsal_home/login"; // Redirect to a success page
+	    return "redirect:/futsal_home/login?UserCreated=true"; // Redirect to a success page
 	}
 
 	
@@ -151,6 +162,12 @@ public class futsalController {
 		ModelAndView home=new ModelAndView("futsal/checkout.html");
 		return home;
 	}
+	
+	
+	public boolean isPasswordValid(String enteredPassword, String storedHashedPassword) {
+	    return passwordEncoder.matches(enteredPassword, storedHashedPassword);
+	}
+	
 	@PostMapping("/LoginValidate")
 	public String LoginValidate(ModelMap model,@RequestParam("email") String email,@RequestParam("pass") String password ,RedirectAttributes redirectAttributes) {
 //		ModelAndView home=new ModelAndView("futsal/checkout.html");
@@ -161,6 +178,9 @@ public class futsalController {
 		
 		System.out.println("Login Details: "+user.getAddress()+" "+user.getPassword());
 		
+		String hashedPassword = passwordEncoder.encode(password);
+		user.setPassword(hashedPassword);
+		System.out.println("loged password "+hashedPassword);
 		List<Map<String, Object>> validateUser = FutsalServices.sendUserDetails(user);
 		
 		boolean isUserFound = validateUser.stream()
@@ -169,10 +189,28 @@ public class futsalController {
 		    );
 
 		if (isUserFound) {
-		    System.out.println("User found with email: " + user.getAddress());
-		    model.addAttribute("UserFound",Boolean.TRUE);
-		    model.addAttribute("loggedIn",Boolean.TRUE);
+			
+			for (Map<String,Object> userDetails:validateUser) {
+				System.out.println("User Found "+userDetails.get("Email"));
+				
+				String passwordFromDb=(String) userDetails.get("Password");
+				System.out.println("Password from db "+passwordFromDb);
+		
+				if (isPasswordValid(user.getPassword(), passwordFromDb)) {
+					System.out.println("User found with email: " + user.getAddress());
+				    model.addAttribute("UserFound",Boolean.TRUE);
+				    model.addAttribute("loggedIn",Boolean.TRUE);
+				    return "redirect:/futsal_home/home";
+				}else {
+					System.out.println(user.getPassword()+" "+passwordFromDb);
+					redirectAttributes.addFlashAttribute("UserNotFound", "UserNotFound");
+				    return "redirect:/futsal_home/login";
+				}
+		
+		    
+			}
 		    return "redirect:/futsal_home/home";
+			
 		} else {
 		    System.out.println("User not found with email: " + user.getAddress());
 		    redirectAttributes.addFlashAttribute("UserNotFound", "UserNotFound");

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.futsal.web.client.models.UserDetails;
@@ -13,6 +14,9 @@ import com.futsal.web.client.models.UserDetails;
 public class FutsalServices {
 
 	 private static JdbcTemplate jdbcTemplate;
+	 
+	 @Autowired
+	    private PasswordEncoder passwordEncoder;
 	 
 	 @Autowired
 	 public FutsalServices(JdbcTemplate jdbcTemplate) {
@@ -46,8 +50,8 @@ public class FutsalServices {
 	 public static List<Map<String, Object>> sendUserDetails(UserDetails user) {
 		    System.out.println("Searching " + user.getAddress() + " in DB");
 
-		    String sql = "SELECT * FROM futsaldb.userdetails WHERE Email LIKE ? AND Password = ?";
-		    List<Map<String, Object>> getDetailsFromDb = jdbcTemplate.queryForList(sql, "%" + user.getAddress() + "%", user.getPassword());
+		    String sql = "SELECT * FROM futsaldb.userdetails WHERE Email LIKE ?";
+		    List<Map<String, Object>> getDetailsFromDb = jdbcTemplate.queryForList(sql, "%" + user.getAddress() + "%");
 
 		    return getDetailsFromDb;
 		}
