@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Bookings</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/futsal/css/style.css" />
+
+</head>
+<body class="subpage">
+
+	<!-- Header -->
+	<header id="header">
+		<div class="logo">
+			<a href="home">Futsal.lk <span>by AccodeMe</span></a>
+		</div>
+		<a href="#menu">Menu</a>
+	</header>
+
+	<!-- Nav -->
+	<nav id="menu">
+		<ul class="links">
+			<li><a href="home">Home</a></li>
+			<li><a href="booking">Booking</a></li>
+			<li><a href="about_us">About us</a></li>
+			<li><a href="login">Log In</a></li>
+		</ul>
+	</nav>
+
+	<!-- One -->
+	<section id="One" class="wrapper style3">
+		<div class="inner">
+			<header class="align-center">
+				<p>Ready to embark on your adventure? Secure your spot now with just a few clicks!</p>
+				<h2>Book Now</h2>
+			</header>
+		</div>
+	</section>
+
+	<!-- Main -->
+	<div id="main" class="container">
+
+		<!-- Elements -->
+		
+		<div class="row 200%">
+			<div class="6u 12u$(medium)">
+
+				<form action="addbooking" method="POST">
+				    <label>Name:</label> <input type="text" id="name" name="name" required> <br>
+				    
+				    <label for="sport">Select Sport:</label>
+				    <select id="sport" name="sport" required>
+				        <option value="" disabled selected>Select a sport</option>
+				        <option value="basketball" data-places="1,2,3">Basketball</option>
+				        <option value="soccer" data-places="4,5,6">Soccer</option>
+				        <option value="volleyball" data-places="7,8,9">Volleyball</option>
+				        <!-- Add more sport options here -->
+				    </select><br>
+				    
+				    <label for="place">Select a Place:</label>
+				    <select id="place" name="place" required>
+				        <option value="" disabled selected>Select a place</option>
+				        <!-- Places will be dynamically populated using JavaScript -->
+				    </select><br>
+				    
+				    <label for="date">Date:</label>
+				    <input type="date" name="date"><br><br><br>
+				    
+				    <label for="time">Time:</label>
+				    <select id="time" name="time" required>
+				        <option value="" disabled selected>Select a time</option>
+				        <!-- Add time options here -->
+				    </select><br><br><br>
+				    
+				    <button type="submit">Book Now</button>
+				</form>
+
+
+			</div>
+			<div class="6u$ 12u$(medium)">
+			
+		
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Footer -->
+	<footer id="footer">
+		<div class="container">
+			<ul class="icons">
+				<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+				<li><a href="#" class="icon fa-facebook"><span
+						class="label">Facebook</span></a></li>
+				<li><a href="#" class="icon fa-instagram"><span
+						class="label">Instagram</span></a></li>
+				<li><a href="#" class="icon fa-envelope-o"><span
+						class="label">Email</span></a></li>
+			</ul>
+		</div>
+	</footer>
+
+
+
+
+	<!-- Scripts -->
+	
+	<script src="/futsal/js/jquery.min.js"></script>
+	<script src="/futsal/js/jquery.scrollex.min.js"></script>
+	<script src="/futsal/js/skel.min.js"></script>
+	<script src="/futsal/js/util.js"></script>
+	<script src="/futsal/js/main.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    // Function to populate time options with 1-hour gap
+    function populateTimeOptions() {
+        const timeSelect = document.getElementById("time");
+        timeSelect.innerHTML = "<option value='' disabled selected>Select a time</option>";
+        
+        const startTime = 8; // Starting hour (8 AM)
+        const endTime = 21;  // Ending hour (9 PM)
+
+        for (let hour = startTime; hour <= endTime; hour++) {
+            const formattedHour = hour.toString().padStart(2, '0');
+            timeSelect.innerHTML += `<option value="${formattedHour}">${formattedHour}:00 - ${formattedHour}:59</option>`;
+        }
+    }
+
+    // Call the function initially to populate time options
+    populateTimeOptions();
+
+    // Event listener to dynamically update time options when the date changes (optional)
+    const dateInput = document.getElementById("date");
+    dateInput.addEventListener("change", () => {
+        populateTimeOptions();
+    });
+
+    $(document).on('change', '#sport', function() {
+        var selectedSport = $(this).val();
+        var places = $('option:selected', this).data('places').split(',');
+
+        // Clear and populate the places dropdown
+        var placeDropdown = $('#place');
+        placeDropdown.empty();
+        $.each(places, function(index, place) {
+            placeDropdown.append($('<option>', {
+                value: place,
+                text: 'Place ' + place
+            }));
+        });
+    });
+</script>
+
+
+</body>
+</html>

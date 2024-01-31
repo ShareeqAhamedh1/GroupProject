@@ -1,5 +1,6 @@
 package com.futsal.web.client.controller;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.module.kotlin.ReflectionCache.BooleanTriState.False;
+import com.futsal.web.client.models.BookingDetails;
+import com.futsal.web.client.models.CheckoutDetails;
+import com.futsal.web.client.models.FutsalDetails;
+import com.futsal.web.client.models.SportDetails;
 import com.futsal.web.client.models.UserDetails;
+import com.futsal.web.client.services.FutsalAdminDashboardService;
+import com.futsal.web.client.services.FutsalAdminService;
 import com.futsal.web.client.services.FutsalServices;
 
 @Controller
@@ -39,13 +46,85 @@ public class futsalController {
 	@GetMapping("/home")
 	public ModelAndView home(ModelMap model) {
 		ModelAndView home=new ModelAndView("futsal/index.html");
+		List<Map<String,Object>> futsalDetails=FutsalAdminService.futsalDetails();
+		
+		model.addAttribute("futsalDetails", futsalDetails);
+		
+		
+		for (Map<String, Object> futsal : futsalDetails) {
+		    String futsalName = (String) futsal.get("fname");
+		    String email = (String) futsal.get("email");
+		    String contactNo = (String) futsal.get("contactno");
+		    String password = (String) futsal.get("password");
+		    String imagePath = (String) futsal.get("image");
+		    
+
+		    if (imagePath != null) {
+		        // Convert image data to Base64 String
+//		        String base64Image = Base64.getEncoder().encodeToString(imageData);
+
+		        // Do something with the retrieved values
+		        System.out.println("Futsal Name: " + futsalName);
+		        System.out.println("Email: " + email);
+		        System.out.println("Contact No: " + contactNo);
+		        System.out.println("Password: " + password);
+		        System.out.println("Image path: " + imagePath);
+		        
+		        model.addAttribute("imagePath", imagePath);
+		        return home;
+		        
+		    } else {
+		        System.out.println("Image data is null");
+		        return home;
+		    }
+		}
+		
 		return home;
 	}
 	
+	@GetMapping("/booking")
+	public ModelAndView booking(ModelMap model) {
+		ModelAndView booking=new ModelAndView("futsal/bookings2.html");
+		return booking;
+	}
+	
 	@GetMapping("/bookings")
-	public ModelAndView bookings(ModelMap model) {
-		ModelAndView home=new ModelAndView("futsal/bookings.html");
-		return home;
+	public ModelAndView bookings(ModelMap model,@RequestParam(value = "futsal_id", required = false) Integer futsal_id) {
+		ModelAndView booking=new ModelAndView("futsal/bookings.html");
+		
+		 if (futsal_id == null) {
+		       
+		        return booking; 
+		    }
+		
+		model.addAttribute("futsal_id",futsal_id);
+		
+		FutsalDetails f_detail=new FutsalDetails();
+		
+		f_detail.setFutsal_id(futsal_id);
+		List<Map<String,Object>> viewFutsaldetails=FutsalAdminService.futsalDetails3(f_detail);
+		
+		model.addAttribute("futsalDetails",viewFutsaldetails);
+		
+		boolean isFutsalAvailable=viewFutsaldetails.stream()
+				.anyMatch(checkFutsal-> checkFutsal.get("futsalid").equals(f_detail.getFutsal_id()));
+
+		if (isFutsalAvailable) {
+			Map<String,Object> futsalData= viewFutsaldetails.get(0);
+			
+			SportDetails sport=new SportDetails();
+			int futsalId =  (int) futsalData.get("futsalid");
+			sport.setF_id(futsalId);
+			List<Map<String,Object>> viewSportDetails=FutsalAdminDashboardService.sportsDetails2(sport);
+			
+			model.addAttribute("sportDetails", viewSportDetails);
+			
+			return booking;
+			
+		}
+		
+		
+		return booking;
 	}
 	
 	@GetMapping("/about_us")
@@ -164,12 +243,13 @@ public class futsalController {
 	}
 	
 	
-	public boolean isPasswordValid(String enteredPassword, String storedHashedPassword) {
-	    return passwordEncoder.matches(enteredPassword, storedHashedPassword);
-	}
-	
+	  public boolean isPasswordValid(String enteredPassword, String storedHashedPassword) {
+	        return passwordEncoder.matches(enteredPassword, storedHashedPassword);
+	    }
+	  
+	  
 	@PostMapping("/LoginValidate")
-	public String LoginValidate(ModelMap model,@RequestParam("email") String email,@RequestParam("pass") String password ,RedirectAttributes redirectAttributes) {
+	public String LoginValidate(ModelMap model,@RequestParam("email") String email,@RequestParam("pass") String password ,RedirectAttributes redirectAttributes,HttpSession session) {
 //		ModelAndView home=new ModelAndView("futsal/checkout.html");
 		
 		UserDetails user=new UserDetails();
@@ -181,6 +261,11 @@ public class futsalController {
 		String hashedPassword = passwordEncoder.encode(password);
 		user.setPassword(hashedPassword);
 		System.out.println("loged password "+hashedPassword);
+		
+		if (user.getAddress().equals("admin") && user.getAddress().equals("admin")) {
+			session.setAttribute("userName",user.getAddress());
+			return "redirect:/adminDashboard/home";
+		}else {
 		List<Map<String, Object>> validateUser = FutsalServices.sendUserDetails(user);
 		
 		boolean isUserFound = validateUser.stream()
@@ -196,7 +281,7 @@ public class futsalController {
 				String passwordFromDb=(String) userDetails.get("Password");
 				System.out.println("Password from db "+passwordFromDb);
 		
-				if (isPasswordValid(user.getPassword(), passwordFromDb)) {
+				if (isPasswordValid(password, passwordFromDb)) {
 					System.out.println("User found with email: " + user.getAddress());
 				    model.addAttribute("UserFound",Boolean.TRUE);
 				    model.addAttribute("loggedIn",Boolean.TRUE);
@@ -217,5 +302,90 @@ public class futsalController {
 		    return "redirect:/futsal_home/login";
 		}
 		
+		}
 	}
+	
+	//add booking
+		@PostMapping("/addbooking")
+		public String addBooking(ModelMap model,
+									RedirectAttributes redirectAttributes,
+									@RequestParam("name") String name,
+								    @RequestParam("sport") String sport,
+								    @RequestParam("place") String place,
+								    @RequestParam("date") String date,
+								    @RequestParam("time") String time,
+								    @RequestParam("futsal_id") int futsal_id,RedirectAttributes redAt) {
+			
+//			if(futsal_id==0) {
+//				
+//			}
+
+			BookingDetails bookingDetails = new BookingDetails(name, sport, place, date, time,futsal_id);
+			System.out.println(bookingDetails.toString());
+			
+			List<Map<String, Object>> addBooking = FutsalServices.getBookingDetails(bookingDetails);
+//			bookingDetails.toString();
+			
+			List<Map<String,Object>> getBookingId=FutsalServices.getBooking(bookingDetails);
+			
+			boolean isBookingIdAvailable = getBookingId.stream()
+				    .anyMatch(booking ->
+				        booking.get("b_place").toString().equals(bookingDetails.getPlace()) &&
+				        booking.get("b_date").toString().equals(bookingDetails.getDate()) &&
+				        booking.get("futsal_id").equals(bookingDetails.getFutsal_id()) &&
+				        booking.get("b_sport").equals(bookingDetails.getSport())
+				    );
+
+			
+			if (isBookingIdAvailable) {
+				Map<String, Object> bookingID = getBookingId.get(0);
+				int booking_id =  (int) bookingID.get("b_id");
+				System.out.println(booking_id);
+				
+				redAt.addFlashAttribute("booking_id", booking_id);
+				return "redirect:/futsal_home/process_booking"; 
+			}else {
+				redAt.addAttribute("futsal_id",bookingDetails.getFutsal_id());
+		    return "redirect:/futsal_home/bookings"; 
+			}
+		}
+		
+		// add checkout
+		
+		@GetMapping("/checkout")
+		public ModelAndView checkout(ModelMap model) {
+			ModelAndView checkout=new ModelAndView("futsal/checkout.html");
+			return checkout;
+		}
+		
+		
+			@PostMapping("/addcheckout")
+			public String addcheckout(ModelMap model,
+										RedirectAttributes redirectAttributes,
+										@RequestParam("firstname") String firstname,
+									    @RequestParam("email") String email,
+									    @RequestParam("address") String address,
+									    @RequestParam("city") String city,
+									    @RequestParam("state") String state,
+									    @RequestParam("zip") String zip,
+									    @RequestParam("cardname") String cardname,
+									    @RequestParam("cardnumber") String cardnumber,
+									    @RequestParam("expMonthYear") String expMonthYear,
+									    @RequestParam("booking_id") int booking_id,
+									    @RequestParam("cvv") String cvv
+									    
+						) {
+
+				CheckoutDetails CheckoutDetails = new CheckoutDetails(firstname, email, address, city, state, Integer.parseInt(zip), "", cardname, cardnumber, expMonthYear, Integer.parseInt(cvv),booking_id);
+				System.out.println(CheckoutDetails.toString());
+				
+				int addCheckout = FutsalServices.addCheckoutDetails(CheckoutDetails);
+				System.out.println(CheckoutDetails.toString());
+				
+			    return "redirect:/futsal_home/home";
+			}
+		
+	
+
+
 }

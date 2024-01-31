@@ -1,9 +1,4 @@
 <!DOCTYPE HTML>
-<!--
-	Hielo by TEMPLATED
-	templated.co @templatedco
-	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
--->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 <title>Bookings</title>
@@ -25,7 +20,7 @@
 	<nav id="menu">
 		<ul class="links">
 			<li><a href="home">Home</a></li>
-			<li><a href="bookings">Booking</a></li>
+			<li><a href="booking">Booking</a></li>
 			<li><a href="about_us">About us</a></li>
 			<li><a href="login">Log In</a></li>
 		</ul>
@@ -49,35 +44,38 @@
 		<div class="row 200%">
 			<div class="6u 12u$(medium)">
 
-				<form action="process_booking" >
+				<form action="addbooking" method="POST">
+				<input name="futsal_id" th:value="${futsal_id}" type="hidden">
+				
 					<label>Name:</label> <input type="text" id="name" name="name"
 						required> <br> 
 						
 						<label for="sport">Select Sport:</label> <select id="sport" name="sport" required>
 						<option value="" disabled selected>Select a sport</option>
-						<option value="basketball">Basketball</option>
-						<option value="soccer">Soccer</option>
-						<option value="volleyball">Volleyball</option>
+						<option th:each="sport : ${sportDetails}" th:value="${sport.typeofsport}" th:text="${sport.typeofsport}"></option>
+						<!-- <option value="soccer">Soccer</option>
+						<option value="volleyball">Volleyball</option> -->
 						<!-- Add more sport options here -->
 					</select><br> 
 					
 					<label for="place">Select a Place:</label> <select id="place" name="place" required>
-						<option value="" disabled selected>Select a place</option>
-						<option value="1">Kandy</option>
-						<option value="2">Gampola</option>
-						<option value="3">Kahatapitya</option>
+						<!-- <option value="" disabled selected>Select a place</option> -->
+						<option th:each="futsal : ${futsalDetails}" th:value="${futsal.fname}" th:text="${futsal.fname}"></option>
+						<!-- <option value="2">Gampola</option>
+						<option value="3">Kahatapitya</option> -->
 						<!-- Add more sport options here -->
 					</select><br>
 					
 					<label for="date">Date:</label> 
-					<input type="date">
+					<input type="date" name="date">
 					<br>
 					<br>
 					<br>
 					
-					<label for="time">Time:</label> <select id="time"
+					<label for="time" >Time:</label> 
+					<select id="time" name="time"
 						required>
-						<option value="" disabled selected>Select a time</option>
+						<option name="time" value="" disabled selected >Select a time</option>
 					</select> <br> <br> <br> 
 					<button type="submit">Book Now</button>
 				</form>

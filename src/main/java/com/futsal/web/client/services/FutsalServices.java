@@ -8,6 +8,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.futsal.web.client.models.BookingDetails;
+import com.futsal.web.client.models.CheckoutDetails;
 import com.futsal.web.client.models.UserDetails;
 
 @Service
@@ -55,4 +57,38 @@ public class FutsalServices {
 
 		    return getDetailsFromDb;
 		}
+	 
+	 public static  List<Map<String,Object>> getBookingDetails(BookingDetails bookingDetails){
+		 System.out.println("Im in Service class :"+bookingDetails.toString());
+		 String sql = "INSERT INTO futsaldb.bookingDetails (b_name, b_sport, b_place, b_date, b_time,futsal_id) VALUES (?, ?, ?, ?, ?,?)";
+		 int insertedDataRows = jdbcTemplate.update(sql, bookingDetails.getName(), bookingDetails.getSport(), bookingDetails.getPlace(), bookingDetails.getDate(), bookingDetails.getTime(),bookingDetails.getFutsal_id());
+		 System.out.println("inserted "+insertedDataRows+" Rows to the table");
+		 return null;
+	 }
+	 
+	 public static List<Map<String,Object>> getBooking(BookingDetails b_details){
+		    String sql = "SELECT * FROM futsaldb.bookingDetails WHERE b_place = ? AND b_date = ? AND b_time = ? AND futsal_id = ?";
+		    
+		    List<Map<String,Object>> getDetails = jdbcTemplate.queryForList(sql, b_details.getPlace(), b_details.getDate(), b_details.getTime(), b_details.getFutsal_id());
+
+		    return getDetails;
+		}
+	 
+	 public static int addCheckoutDetails(CheckoutDetails checkoutDetails) {
+		 String sql = "INSERT INTO checkoutDetails "
+                 + "(full_name, email, address, city, state, zip, name_on_card, credit_card, expMonthYear, cvv,b_id) "
+                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+
+      int getDetailsFromDb = jdbcTemplate.update(sql, checkoutDetails.getFirstname(), checkoutDetails.getEmail(),
+                          checkoutDetails.getAddress(), checkoutDetails.getCity(),
+                          checkoutDetails.getState(), checkoutDetails.getZip(), checkoutDetails.getCardname(),
+                          checkoutDetails.getCardnumber(), checkoutDetails.getExpmonthYear(), checkoutDetails.getCvv(),checkoutDetails.getBooking_id());
+
+
+		 
+		 return (Integer) getDetailsFromDb;
+	 }
+
+	 
+
 }

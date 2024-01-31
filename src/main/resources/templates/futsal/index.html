@@ -54,7 +54,7 @@
 	<nav id="menu">
 		<ul class="links">
 			<li><a href="home">Home</a></li>
-			<li><a href="bookings">Booking</a></li>
+			<li><a href="booking">Booking</a></li>
 			<li><a href="about_us">About Us</a></li>
 			<li><a href="login">Log In</a></li>
 			<li th:if="${loggedIn}"><a href="login">My Profile</a></li>
@@ -139,12 +139,14 @@
 				<h2>Trending Places</h2>
 			</header>
 			<div class="gallery">
-				<div>
+				<div th:each="futsal : ${futsalDetails}">
 					<div class="image fit">
-						<a href="bookings"><img src="/futsal/images/pic01.jpg" alt="" /></a>
+						<a th:href="@{/futsal_home/bookings(futsal_id=${futsal.futsalid})}"><img th:src="${futsal.image}" alt="" height="200"/></a>
 					</div>
 				</div>
-				<div>
+				
+				
+				<!-- <div>
 					<div class="image fit">
 						<a href="bookings"><img src="/futsal/images/pic02.jpg" alt="" /></a>
 					</div>
@@ -158,7 +160,7 @@
 					<div class="image fit">
 						<a href="bookings"><img src="/futsal/images/pic04.jpg" alt="" /></a>
 					</div>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</section>
