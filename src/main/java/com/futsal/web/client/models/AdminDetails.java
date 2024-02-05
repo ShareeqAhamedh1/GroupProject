@@ -1,11 +1,20 @@
 package com.futsal.web.client.models;
 
 public class AdminDetails {
+	private int adminId;
 	private String adminName;
 	private String email;
 	private String contactNo;
 	private String password;
 	private String rePassword;
+	
+	
+	public int getAdminId() {
+		return adminId;
+	}
+	public void setAdminId(int adminId) {
+		this.adminId = adminId;
+	}
 	public String getAdminName() {
 		return adminName;
 	}

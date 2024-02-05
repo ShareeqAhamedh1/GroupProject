@@ -56,8 +56,8 @@
 			<li><a href="home">Home</a></li>
 			<li><a href="booking">Booking</a></li>
 			<li><a href="about_us">About Us</a></li>
-			<li><a href="login">Log In</a></li>
-			<li th:if="${loggedIn}"><a href="login">My Profile</a></li>
+			<li th:if="${userLogged}!=null"><a href="logout">Log Out</a></li>
+			<li th:if="${userLogged}==null"><a href="login">Log in</a></li>
 		</ul>
 	</nav>
 

@@ -29,19 +29,23 @@ import com.futsal.web.client.models.SportDetails;
 import com.futsal.web.client.services.FutsalAdminDashboardService;
 import com.futsal.web.client.services.FutsalAdminService;
 import com.futsal.web.client.util.SessionUtil;
+import com.futsal.web.client.util.SessionUtilFutsal;
 
 @Controller
-@RequestMapping("futsalAdminDashboard")
+@RequestMapping("AdminDashboard")
 public class futsalDashboard {
+	
+	@Autowired
+	private futsalDashboard futsalDashboard;
 
 	@Autowired
-    private HttpServletRequest request;
+    private HttpServletRequest requestFutsal;
 	
 	@Autowired
-    private SessionUtil sessionUtil;
+    private SessionUtilFutsal sessionUtilFutsal;
 	
 	@Autowired
-	private HttpSession httpSession;
+	private HttpSession httpSessionFutsal;
 	
 
 	 private static final String uploadFolder="src/main/resources/static/futsal/images/adimg/";
@@ -54,26 +58,26 @@ public class futsalDashboard {
 		@GetMapping("/")
 		@ResponseBody
 		String home() {
-			return "This is SuperAdmin";
+			return "This is admin";
 		}
 		
 		@GetMapping("/home")
 		public ModelAndView home(ModelMap model) {
-		    if (sessionUtil.getUserNameFromSession() != null) {
-		        ModelAndView home = new ModelAndView("futsal/SuperAdmin/index.html");
+		    if (sessionUtilFutsal.getIdFromSession() != null) {
+		        ModelAndView home = new ModelAndView("futsal/admin/index.html");
 
-		        String f_id = sessionUtil.getIdFromSession();
-		        String userName = sessionUtil.getUserNameFromSession();
+		        String f_id = sessionUtilFutsal.getIdFromSession();
+//		        String userName = sessionUtil.getUserNameFromSession();
 		        
 		        // Add user-related attributes to the model
-		        home.addObject("userName", userName);
+//		        home.addObject("userName", userName);
 		        home.addObject("f_id", f_id);
-		        System.out.println(userName);
+//		        System.out.println(userName);
 		        System.out.println(f_id);
 
 		        return home;
 		    } else {
-		        ModelAndView signout = new ModelAndView("futsal/SuperAdmin/signin.html");
+		        ModelAndView signout = new ModelAndView("futsal/admin/signin.html");
 		        return signout;
 		    }
 		}
@@ -81,32 +85,32 @@ public class futsalDashboard {
 		@GetMapping("/form")
 		public ModelAndView form(ModelMap model) {
 			
-			if(sessionUtil.getUserNameFromSession()!=null) {
-			ModelAndView form=new ModelAndView("futsal/SuperAdmin/form.html");
+			if(sessionUtilFutsal.getIdFromSession()!=null) {
+			ModelAndView form=new ModelAndView("futsal/admin/form.html");
 			return form;
 			
 			}else {
-				ModelAndView signout=new ModelAndView("futsal/SuperAdmin/signin.html");
+				ModelAndView signout=new ModelAndView("futsal/admin/signin.html");
 				return signout;
 			}
 		}
 		@GetMapping("/table")
 		public ModelAndView table(ModelMap model) {
-			if(sessionUtil.getUserNameFromSession()!=null) {
+			if(sessionUtilFutsal.getIdFromSession()!=null) {
 			
 				SportDetails sport =new SportDetails();
-				String f_id_s = sessionUtil.getIdFromSession();
+				String f_id_s = sessionUtilFutsal.getIdFromSession();
 				int f_id = Integer.parseInt(f_id_s);
 				sport.setF_id(f_id);
 				List<Map<String,Object>> viewSportDetails=FutsalAdminDashboardService.sportsDetails2(sport);
 				
 				model.addAttribute("sportDetails", viewSportDetails);
 				
-			ModelAndView table=new ModelAndView("futsal/SuperAdmin/table.html");
+			ModelAndView table=new ModelAndView("futsal/admin/table.html");
 			return table;
 			
 			}else {
-				ModelAndView signout=new ModelAndView("futsal/SuperAdmin/signin.html");
+				ModelAndView signout=new ModelAndView("futsal/admin/signin.html");
 				return signout;
 			}
 		}
@@ -114,29 +118,29 @@ public class futsalDashboard {
 		public ModelAndView chart(ModelMap model) {
 			
 
-			if(sessionUtil.getUserNameFromSession()!=null) {
-			ModelAndView chart=new ModelAndView("futsal/SuperAdmin/chart.html");
+			if(sessionUtilFutsal.getIdFromSession()!=null) {
+			ModelAndView chart=new ModelAndView("futsal/admin/chart.html");
 			return chart;
 			
 			}else {
-				ModelAndView signout=new ModelAndView("futsal/SuperAdmin/signin.html");
+				ModelAndView signout=new ModelAndView("futsal/admin/signin.html");
 				return signout;
 			}
 		}
 		@GetMapping("/signin")
 		public ModelAndView signin(ModelMap model) {
-			ModelAndView signin=new ModelAndView("futsal/SuperAdmin/signin.html");
+			ModelAndView signin=new ModelAndView("futsal/admin/signin.html");
 			return signin;
 		}
 		@GetMapping("/signup")
 		public ModelAndView signup(ModelMap model) {
-			ModelAndView signup=new ModelAndView("futsal/SuperAdmin/signup.html");
+			ModelAndView signup=new ModelAndView("futsal/admin/signup.html");
 			return signup;
 		}
 		
 		@GetMapping("/404")
 		public ModelAndView error(ModelMap model) {
-			ModelAndView error=new ModelAndView("futsal/SuperAdmin/404.html");
+			ModelAndView error=new ModelAndView("futsal/admin/404.html");
 			return error;
 		}
 		
@@ -174,16 +178,16 @@ public class futsalDashboard {
 			            System.out.println("User found with email: " + admin.getEmail());
 			            model.addAttribute("UserFound", Boolean.TRUE);
 			            model.addAttribute("loggedIn", Boolean.TRUE);
-			            session.setAttribute("userName", admin.getEmail());
-			            return "redirect:/futsalAdminDashboard/home";
+//			            session.setAttribute("userName", admin.getEmail());
+			            return "redirect:/AdminDashboard/home";
 			        } else {
 			            redirectAttributes.addFlashAttribute("UserNotFound", "UserNotFound");
-			            return "redirect:/futsalAdminDashboard/signin";
+			            return "redirect:/AdminDashboard/signin";
 			        }
 			    }
 			} else {
 			    redirectAttributes.addFlashAttribute("UserNotExisted", "UserNotExisted");
-			    return "redirect:/futsalAdminDashboard/signin";
+			    return "redirect:/AdminDashboard/signin";
 			}
 
 			System.out.println(isAdminFound);
@@ -191,18 +195,28 @@ public class futsalDashboard {
 			return "redirect:home";
 		}
 		
-		public void invalidateSession() {
+		public void invalidateSessionFutsal() {
 		    // Invalidate the session
-		    httpSession.invalidate();
+			httpSessionFutsal.invalidate();
 		}
 		
+
 		@GetMapping("/signout")
 		public ModelAndView signout(ModelMap model) {
-			httpSession.invalidate();
-			ModelAndView signout=new ModelAndView("futsal/SuperAdmin/signin.html");
-			return signout;
+		    // Retrieve the attribute from the session
+		    futsalDashboard futsalSession = (futsalDashboard) httpSessionFutsal.getAttribute(sessionUtilFutsal.getIdFromSession());
+
+		    // Check if the attribute is not null before invalidating
+		    if (futsalSession != null) {
+		    	futsalSession.invalidateSessionFutsal();
+		    }
+
+		    // Invalidate the entire session
+		    httpSessionFutsal.invalidate();
+
+		    ModelAndView signout = new ModelAndView("futsal/super_admin/signin.html");
+		    return signout;
 		}
-		
 		
 		public static String convertMultipartFileToString(MultipartFile file) {
 	        try {
@@ -230,7 +244,7 @@ public class futsalDashboard {
 			SportDetails s_details=new SportDetails();
 		
 			s_details.setTypeOfSports(typeOfSport);
-			String f_id_s = sessionUtil.getIdFromSession();
+			String f_id_s = sessionUtilFutsal.getIdFromSession();
 			int f_id = Integer.parseInt(f_id_s);
 			s_details.setF_id(f_id);
 //			f_details.setImage(imageFile);
@@ -273,7 +287,7 @@ public class futsalDashboard {
 		            }
 		        }
 
-			 return "redirect:/futsalAdminDashboard/form";
+			 return "redirect:/AdminDashboard/form";
 		}
 		
 		
@@ -291,7 +305,7 @@ public class futsalDashboard {
 			System.out.println("deleted "+s_details.getS_id());
 			
 			
-			return "redirect:/futsalAdminDashboard/table";
+			return "redirect:/AdminDashboard/table";
 		}
 		
 		
@@ -317,7 +331,7 @@ public class futsalDashboard {
 		    }
 
 		    System.out.println(isSportFound);
-		    return "redirect:/futsalAdminDashboard/table";
+		    return "redirect:/AdminDashboard/table";
 		}
 		
 		

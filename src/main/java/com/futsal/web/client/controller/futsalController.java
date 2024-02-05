@@ -29,6 +29,7 @@ import com.futsal.web.client.models.UserDetails;
 import com.futsal.web.client.services.FutsalAdminDashboardService;
 import com.futsal.web.client.services.FutsalAdminService;
 import com.futsal.web.client.services.FutsalServices;
+import com.futsal.web.client.util.SessionUtilUser;
 
 @Controller
 @RequestMapping("futsal_home")
@@ -36,6 +37,12 @@ public class futsalController {
 	
 	  @Autowired
 	    private PasswordEncoder passwordEncoder;
+	  
+	  @Autowired
+	  private SessionUtilUser sessionUtilUser;
+	  
+	  @Autowired
+		private HttpSession httpSessionUser;
 
 	@GetMapping("/")
 	@ResponseBody
@@ -46,10 +53,19 @@ public class futsalController {
 	@GetMapping("/home")
 	public ModelAndView home(ModelMap model) {
 		ModelAndView home=new ModelAndView("futsal/index.html");
+		
+		
 		List<Map<String,Object>> futsalDetails=FutsalAdminService.futsalDetails();
 		
 		model.addAttribute("futsalDetails", futsalDetails);
 		
+if (sessionUtilUser.getUserIdFromSession()!=null) {
+			
+			String userId = sessionUtilUser.getUserIdFromSession();
+			System.out.println(userId);
+			model.addAttribute("userLogged",userId);
+			 return home;
+	}
 		
 		for (Map<String, Object> futsal : futsalDetails) {
 		    String futsalName = (String) futsal.get("fname");
@@ -77,55 +93,63 @@ public class futsalController {
 		        System.out.println("Image data is null");
 		        return home;
 		    }
+		    
 		}
+			
+		
 		
 		return home;
 	}
 	
 	@GetMapping("/booking")
-	public ModelAndView booking(ModelMap model) {
-		ModelAndView booking=new ModelAndView("futsal/bookings2.html");
-		return booking;
-	}
-	
-	@GetMapping("/bookings")
-	public ModelAndView bookings(ModelMap model,@RequestParam(value = "futsal_id", required = false) Integer futsal_id) {
-		ModelAndView booking=new ModelAndView("futsal/bookings.html");
-		
-		 if (futsal_id == null) {
-		       
-		        return booking; 
-		    }
-		
-		model.addAttribute("futsal_id",futsal_id);
-		
-		FutsalDetails f_detail=new FutsalDetails();
-		
-		f_detail.setFutsal_id(futsal_id);
-		List<Map<String,Object>> viewFutsaldetails=FutsalAdminService.futsalDetails3(f_detail);
-		
-		model.addAttribute("futsalDetails",viewFutsaldetails);
-		
-		boolean isFutsalAvailable=viewFutsaldetails.stream()
-				.anyMatch(checkFutsal-> checkFutsal.get("futsalid").equals(f_detail.getFutsal_id()));
-
-		if (isFutsalAvailable) {
-			Map<String,Object> futsalData= viewFutsaldetails.get(0);
+	public String booking(ModelMap model) {
+//		ModelAndView booking=new ModelAndView("futsal/bookings2.html");
+		if (sessionUtilUser.getUserIdFromSession()!=null) {
 			
-			SportDetails sport=new SportDetails();
-			int futsalId =  (int) futsalData.get("futsalid");
-			sport.setF_id(futsalId);
-			List<Map<String,Object>> viewSportDetails=FutsalAdminDashboardService.sportsDetails2(sport);
-			
-			model.addAttribute("sportDetails", viewSportDetails);
-			
-			return booking;
-			
+			String userId = sessionUtilUser.getUserIdFromSession();
+			System.out.println(userId);
+			model.addAttribute("userLogged",userId);
+			return "futsal/bookings";
 		}
 		
 		
-		return booking;
+		return "redirect:/futsal_home/login";
 	}
+	
+	@GetMapping("/bookings")
+	public String bookings(ModelMap model, @RequestParam(value = "futsal_id", required = false) Integer futsal_id) {
+	    if (sessionUtilUser.getUserIdFromSession() != null) {
+	        String userId = sessionUtilUser.getUserIdFromSession();
+	        model.addAttribute("userLogged", userId);
+
+	        if (futsal_id == null) {
+	            return "redirect:/futsal_home/booking";
+	        }
+
+	        FutsalDetails f_detail = new FutsalDetails();
+	        f_detail.setFutsal_id(futsal_id);
+	        List<Map<String, Object>> viewFutsaldetails = FutsalAdminService.futsalDetails3(f_detail);
+
+	        if (!viewFutsaldetails.isEmpty()) {
+	            Map<String, Object> futsalData = viewFutsaldetails.get(0);
+
+	            SportDetails sport = new SportDetails();
+	            int futsalId = (int) futsalData.get("futsalid");
+	            sport.setF_id(futsalId);
+	            List<Map<String, Object>> viewSportDetails = FutsalAdminDashboardService.sportsDetails2(sport);
+
+	            model.addAttribute("futsalDetails", viewFutsaldetails);
+	            model.addAttribute("sportDetails", viewSportDetails);
+
+	            return "futsal/bookings"; // Assuming you want to return the view directly
+	        } else {
+	            return "redirect:/futsal_home/booking";
+	        }
+	    } else {
+	        return "redirect:/futsal_home/login";
+	    }
+	}
+
 	
 	@GetMapping("/about_us")
 	public ModelAndView about_us(ModelMap model) {
@@ -249,7 +273,9 @@ public class futsalController {
 	  
 	  
 	@PostMapping("/LoginValidate")
-	public String LoginValidate(ModelMap model,@RequestParam("email") String email,@RequestParam("pass") String password ,RedirectAttributes redirectAttributes,HttpSession session) {
+	public String LoginValidate(ModelMap model,@RequestParam("email") String email,
+			@RequestParam("pass") String password ,RedirectAttributes redirectAttributes,
+			HttpSession session) {
 //		ModelAndView home=new ModelAndView("futsal/checkout.html");
 		
 		UserDetails user=new UserDetails();
@@ -264,7 +290,7 @@ public class futsalController {
 		
 		if (user.getAddress().equals("admin") && user.getAddress().equals("admin")) {
 			session.setAttribute("userName",user.getAddress());
-			return "redirect:/adminDashboard/home";
+			return "redirect:/SuperAdmin/home";
 		}else {
 		List<Map<String, Object>> validateUser = FutsalServices.sendUserDetails(user);
 		
@@ -285,6 +311,8 @@ public class futsalController {
 					System.out.println("User found with email: " + user.getAddress());
 				    model.addAttribute("UserFound",Boolean.TRUE);
 				    model.addAttribute("loggedIn",Boolean.TRUE);
+				    session.setAttribute("userId", String.valueOf(userDetails.get("UserId")));
+				    
 				    return "redirect:/futsal_home/home";
 				}else {
 					System.out.println(user.getPassword()+" "+passwordFromDb);
@@ -382,6 +410,30 @@ public class futsalController {
 				int addCheckout = FutsalServices.addCheckoutDetails(CheckoutDetails);
 				System.out.println(CheckoutDetails.toString());
 				
+			    return "redirect:/futsal_home/home";
+			}
+			
+			public void invalidateSessionUser() {
+			    // Invalidate the session
+				httpSessionUser.invalidate();
+			}
+			
+			
+			
+			@GetMapping("/logout")
+			public String logout(ModelMap model) {
+			    // Retrieve the attribute from the session
+			    futsalController userSession = (futsalController) httpSessionUser.getAttribute(sessionUtilUser.getUserIdFromSession());
+
+			    // Check if the attribute is not null before invalidating
+			    if (userSession != null) {
+			    	userSession.invalidateSessionUser();
+			    }
+
+			    // Invalidate the entire session
+			    httpSessionUser.invalidate();
+
+			   
 			    return "redirect:/futsal_home/home";
 			}
 		

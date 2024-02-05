@@ -9,22 +9,22 @@ import org.springframework.stereotype.Component;
 public class SessionUtil {
 
     @Autowired
-    private HttpServletRequest request;
+    private HttpServletRequest requestAdmin;
 
     public String getUserNameFromSession() {
-        HttpSession session = request.getSession(false); // Do not create a new session if it doesn't exist
+        HttpSession session = requestAdmin.getSession(false); // Do not create a new session if it doesn't exist
         if (session != null) {
-            return (String) session.getAttribute("userName");
+            return (String) session.getAttribute("userId");
         }
         return null;
     }
     
-
-    public String getIdFromSession() {
-        HttpSession session = request.getSession(false); // Do not create a new session if it doesn't exist
-        if (session != null) {
-            return (String) session.getAttribute("futsalId");
-        }
-        return null;
-    }
+//
+//    public String getIdFromSession() {
+//        HttpSession session = requestAdmin.getSession(false); // Do not create a new session if it doesn't exist
+//        if (session != null) {
+//            return (String) session.getAttribute("futsalId");
+//        }
+//        return null;
+//    }
 }

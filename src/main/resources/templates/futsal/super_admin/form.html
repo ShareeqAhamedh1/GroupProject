@@ -3,13 +3,13 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Admin-Summary</title>
+    <title>Admin-Forms</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
 
-      <!-- Favicon -->
-    <link href="/futsal/admin/img/favicon.ico" rel="icon">
+       <!-- Favicon -->
+    <link href="/futsal/super_admin/img/favicon.ico" rel="icon">
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,30 +21,29 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
-    <link href="/futsal/admin/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="/futsal/admin/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="/futsal/super_admin/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/futsal/super_admin/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="/futsal/admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/futsal/super_admin/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="/futsal/admin/css/style.css" rel="stylesheet">
+    <link href="/futsal/super_admin/css/style.css" rel="stylesheet">
 </head>
 
 <body>
     <div class="container-fluid position-relative d-flex p-0">
-      
-
+       
 
         <!-- Sidebar Start -->
         <div class="sidebar pe-4 pb-3">
-           <nav class="navbar bg-secondary navbar-dark">
+            <nav class="navbar bg-secondary navbar-dark">
                 <a href="home" class="navbar-brand mx-4 mb-3">
                     <h3 class="text-primary"><i class="fa fa-user-edit me-2"></i>Futsal.lk</h3>
                 </a>
                 <div class="d-flex align-items-center ms-4 mb-4">
                     <div class="position-relative">
-                        <img class="rounded-circle" src="/futsal/admin/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                        <img class="rounded-circle" src="/futsal/super_admin/img/user.jpg" alt="" style="width: 40px; height: 40px;">
                         <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
                     </div>
                     <div class="ms-3">
@@ -54,7 +53,7 @@
                 </div>
                 <div class="navbar-nav w-100">
                     <a href="home" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
-                    <!-- <div class="nav-item dropdown">
+                   <!--  <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Elements</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="button" class="dropdown-item">Buttons</a>
@@ -63,13 +62,14 @@
                         </div>
                     </div>
                     <a href="widget" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Widgets</a> -->
-                    <a href="form" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Add Sports</a>
-                    <a href="table" class="nav-item nav-link active"><i class="fa fa-table me-2"></i>Summary</a>
-                  <!--   <a href="chart" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a> -->
+                   <a href="form" class="nav-item nav-link active"><i class="fa fa-keyboard me-2"></i>Add Futsal</a>
+                    <a href="table" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Summary</a>
+                   <!--  <a href="chart" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a> -->
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-file-alt me-2"></i>Pages</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="signin" class="dropdown-item">Sign In</a>
+                            <a href="signup" class="dropdown-item">Sign Up</a>
                             <a href="404" class="dropdown-item">404 Error</a>
                             <a href="signout" class="dropdown-item" type="button">Log out</a>
                         </div>
@@ -93,54 +93,64 @@
                 <form class="d-none d-md-flex ms-4">
                     <input class="form-control bg-dark border-0" type="search" placeholder="Search">
                 </form>
-                
+               
             </nav>
             <!-- Navbar End -->
 
 
-            <!-- Table Start -->
+            <!-- Form Start -->
             <div class="container-fluid pt-4 px-4">
                 <div class="row g-4">
-                   
-                   <div th:if="${deletedSuccessfully}">
-					    <!-- Display a success message -->
-					    <p>Deleted successfully!</p>
-					</div>
-                    <div class="col-12">
+                 
+                    
+                    <div>
+                     <div class="col-sm-12 ">
                         <div class="bg-secondary rounded h-100 p-4">
-                            <h6 class="mb-4">Responsive Table</h6>
-                            
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                           
-                                            <th scope="col">Futsal Name</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr th:each="sport : ${sportDetails}">
-                                            
-                                            <td th:text="${sport.typeofsport}"></td>
-                                            <td > <a th:href="@{/AdminDashboard/deleteSport(sport_id=${sport.s_id})}">
-												    <!-- Your link content -->
-												    <img src="/futsal/admin/img/download.png" alt="Button" style="width: 20px; height: 20px;">
-												</a>
-												<!-- <a th:href="@{/futsalAdminDashboard/editSport(sport_id=${sport.s_id})}">
-												    <img src="/futsal/admin/img/download (1).png" alt="Button" style="width: 20px; height: 20px;">
-												</a> -->
-												</td>
-                                        </tr>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
+                            <h6 class="mb-4">Add Futsal</h6>
+                            <form action="addFutsal" method="post" enctype="multipart/form-data">
+                                <div class="row mb-3">
+                                    <label for="inputEmail3" class="col-sm-2 col-form-label">Futsal Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="futsalName" class="form-control" id="inputEmail3" required>
+                                    </div>
+                                </div>
+                                
+                                 <div class="row mb-3">
+                                    <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                                    <div class="col-sm-10">
+                                        <input type="email" name="email" class="form-control" id="inputEmail3" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <label for="inputContact3" class="col-sm-2 col-form-label">Contact No</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="contactNo" class="form-control" id="inputContact3"  required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
+                                    <div class="col-sm-10">
+                                        <input type="password" name="password" class="form-control" id="inputPassword3" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <label for="inputImg3" class="col-sm-2 col-form-label">Image</label>
+                                    <div class="col-sm-10">
+                                        <input type="file" name="image" accept="image/*" class="form-control" id="inputImg3" required>
+                                    </div>
+                                </div>
+                               
+                                <button type="submit" class="btn btn-primary">Create</button>
+                            </form>
                         </div>
                     </div>
+                    </div>
+               
                 </div>
             </div>
-            <!-- Table End -->
+            <!-- Form End -->
 
 
             <!-- Footer Start -->
