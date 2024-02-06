@@ -52,7 +52,7 @@ public class futsalController {
 	
 	@GetMapping("/home")
 	public ModelAndView home(ModelMap model) {
-		ModelAndView home=new ModelAndView("futsal/index.html");
+		ModelAndView home=new ModelAndView("/futsal/index.html");
 		
 		
 		List<Map<String,Object>> futsalDetails=FutsalAdminService.futsalDetails();
@@ -153,19 +153,19 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 	
 	@GetMapping("/about_us")
 	public ModelAndView about_us(ModelMap model) {
-		ModelAndView home=new ModelAndView("futsal/about_us.html");
+		ModelAndView home=new ModelAndView("/futsal/about_us.html");
 		return home;
 	}
 	
 	@GetMapping("/just")
 	public ModelAndView just(ModelMap model) {
-		ModelAndView home=new ModelAndView("futsal/just.html");
+		ModelAndView home=new ModelAndView("/futsal/just.html");
 		return home;
 	}
 	
 	@GetMapping("/login")
 	public ModelAndView login(@RequestParam(name = "UserExist", required = false, defaultValue = "false") String userExist,@RequestParam(name = "UserCreated", required = false, defaultValue = "false") String UserCreated, ModelMap model) {
-		ModelAndView login = new ModelAndView("futsal/login2.html");
+		ModelAndView login = new ModelAndView("/futsal/login2.html");
 	    
 	    // Use the "userExist" parameter as needed in your login page logic
 	    model.addAttribute("UserExist", userExist);
@@ -176,7 +176,7 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 	
 	@GetMapping("/signup")
 	public ModelAndView signup(ModelMap model, @RequestAttribute(name = "passwordNotMatching", required = false) String passwordNotMatching) {
-	    ModelAndView signup = new ModelAndView("futsal/signup.html");
+	    ModelAndView signup = new ModelAndView("/futsal/signup.html");
 	    
 //	    if (passwordNotMatching != null) {
 //	        // Add the attribute to the model if it exists
@@ -193,7 +193,7 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 	
 	@GetMapping("/myprofile")
 	public ModelAndView myprofile(ModelMap model) {
-		ModelAndView myprofile=new ModelAndView("futsal/myprofile.html");
+		ModelAndView myprofile=new ModelAndView("/futsal/myprofile.html");
 		return myprofile;
 	}
 	
@@ -262,7 +262,7 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 	
 	@GetMapping("/process_booking")
 	public ModelAndView process_booking(ModelMap model) {
-		ModelAndView home=new ModelAndView("futsal/checkout.html");
+		ModelAndView home=new ModelAndView("/futsal/checkout.html");
 		return home;
 	}
 	
@@ -382,7 +382,7 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 		
 		@GetMapping("/checkout")
 		public ModelAndView checkout(ModelMap model) {
-			ModelAndView checkout=new ModelAndView("futsal/checkout.html");
+			ModelAndView checkout=new ModelAndView("/futsal/checkout.html");
 			return checkout;
 		}
 		

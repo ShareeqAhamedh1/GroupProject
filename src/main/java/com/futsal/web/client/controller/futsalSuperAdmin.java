@@ -52,7 +52,7 @@ public class futsalSuperAdmin {
 	 @Autowired
 	    private PasswordEncoder passwordEncoder;
 
-	 private static final String uploadFolder="src/main/resources/static/futsal/images/img/";
+	 private static final String uploadFolder="/src/main/resources/static/futsal/images/img/";
 	 
 	@GetMapping("/")
 	@ResponseBody
@@ -64,13 +64,13 @@ public class futsalSuperAdmin {
 	public ModelAndView home(ModelMap model,String user) {
 		
 		if(sessionUtil.getUserNameFromSession()!=null) {
-		ModelAndView home=new ModelAndView("futsal/super_admin/index.html");
+		ModelAndView home=new ModelAndView("/futsal/super_admin/index.html");
 		
 		String userId = sessionUtil.getUserNameFromSession();
 		System.out.println(userId);
 		return home;
 		}else {
-			ModelAndView signout=new ModelAndView("futsal/super_admin/signin.html");
+			ModelAndView signout=new ModelAndView("/futsal/super_admin/signin.html");
 			return signout;
 		}
 	}
@@ -82,10 +82,10 @@ public class futsalSuperAdmin {
 //			 redirectAttributes.addFlashAttribute("editDetails", true);
 			 
 //			 model.addAttribute("editDetails",redirectAttributes.addFlashAttribute("editDetails", true));
-		ModelAndView form=new ModelAndView("futsal/super_admin/form.html");
+		ModelAndView form=new ModelAndView("/futsal/super_admin/form.html");
 		return form;
 		}else {
-			ModelAndView signout=new ModelAndView("futsal/super_admin/signin.html");
+			ModelAndView signout=new ModelAndView("/futsal/super_admin/signin.html");
 			return signout;
 		}
 	}
@@ -97,26 +97,26 @@ public class futsalSuperAdmin {
 			
 			model.addAttribute("futsalDetails", viewFutsalDetails);
 			
-		ModelAndView table=new ModelAndView("futsal/super_admin/table.html");
+		ModelAndView table=new ModelAndView("/futsal/super_admin/table.html");
 		return table;
 		}else {
-			ModelAndView signout=new ModelAndView("futsal/super_admin/signin.html");
+			ModelAndView signout=new ModelAndView("/futsal/super_admin/signin.html");
 			return signout;
 		}
 	}
 	@GetMapping("/chart")
 	public ModelAndView chart(ModelMap model) {
 		if(sessionUtil.getUserNameFromSession()!=null) {
-		ModelAndView chart=new ModelAndView("futsal/super_admin/chart.html");
+		ModelAndView chart=new ModelAndView("/futsal/super_admin/chart.html");
 		return chart;
 		}else {
-			ModelAndView signout=new ModelAndView("futsal/super_admin/signin.html");
+			ModelAndView signout=new ModelAndView("/futsal/super_admin/signin.html");
 			return signout;
 		}
 	}
 	@GetMapping("/signin")
 	public ModelAndView signin(ModelMap model) {
-		ModelAndView signin=new ModelAndView("futsal/super_admin/signin.html");
+		ModelAndView signin=new ModelAndView("/futsal/super_admin/signin.html");
 		return signin;
 	}
 	@GetMapping("/signup")
@@ -186,7 +186,7 @@ public class futsalSuperAdmin {
 		if (!password.equals(rePassword)) {
 			
 			model.addAttribute("passwordNotMatching",Boolean.TRUE);
-			return "futsal/super_admin/signup.html";
+			return "/futsal/super_admin/signup.html";
 		}
 		
 		AdminDetails a_details=new AdminDetails();
@@ -318,7 +318,7 @@ public class futsalSuperAdmin {
 	
 	@GetMapping("/404")
 	public ModelAndView error(ModelMap model) {
-		ModelAndView error=new ModelAndView("futsal/super_admin/404.html");
+		ModelAndView error=new ModelAndView("/futsal/super_admin/404.html");
 		return error;
 	}
 	
@@ -341,7 +341,7 @@ public class futsalSuperAdmin {
 	    // Invalidate the entire session
 	    httpSessionAdmin.invalidate();
 
-	    ModelAndView signout = new ModelAndView("futsal/super_admin/signin.html");
+	    ModelAndView signout = new ModelAndView("/futsal/super_admin/signin.html");
 	    return signout;
 	}
 	
@@ -407,10 +407,10 @@ public class futsalSuperAdmin {
 //			 redirectAttributes.addFlashAttribute("editDetails", true);
 			 
 //			 model.addAttribute("editDetails",redirectAttributes.addFlashAttribute("editDetails", true));
-		ModelAndView form=new ModelAndView("futsal/super_admin/form2.html");
+		ModelAndView form=new ModelAndView("/futsal/super_admin/form2.html");
 		return form;
 		}else {
-			ModelAndView signout=new ModelAndView("futsal/super_admin/signin.html");
+			ModelAndView signout=new ModelAndView("/futsal/super_admin/signin.html");
 			return signout;
 		}
 	}
@@ -446,7 +446,7 @@ public class futsalSuperAdmin {
 	                
 	                String fullPath=path.toString();
 	    		    
-	    		    String prefixToRemove = "src\\main\\resources\\static";
+	    		    String prefixToRemove = "\\src\\main\\resources\\static";
 
 	    	        // Remove the prefix
 	    	        String imagePathFinal = removePrefix(fullPath, prefixToRemove);
