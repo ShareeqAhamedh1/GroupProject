@@ -64,13 +64,13 @@ public class futsalSuperAdmin {
 	public ModelAndView home(ModelMap model,String user) {
 		
 		if(sessionUtil.getUserNameFromSession()!=null) {
-		ModelAndView home=new ModelAndView("futsal/super_admin/index.html");
+		ModelAndView home=new ModelAndView("/futsal/super_admin/index.html");
 		
 		String userId = sessionUtil.getUserNameFromSession();
 		System.out.println(userId);
 		return home;
 		}else {
-			ModelAndView signout=new ModelAndView("futsal/super_admin/signin.html");
+			ModelAndView signout=new ModelAndView("/futsal/super_admin/signin.html");
 			return signout;
 		}
 	}
