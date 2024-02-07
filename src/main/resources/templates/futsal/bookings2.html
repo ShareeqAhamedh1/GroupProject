@@ -49,18 +49,19 @@
 				<form action="addbooking" method="POST">
 				    <label>Name:</label> <input type="text" id="name" name="name" required> <br>
 				    
+				    <input name="futsal_id" th:value="${futsalId}" type="hidden">
 				    <label for="sport">Select Sport:</label>
 				    <select id="sport" name="sport" required>
-				        <option value="" disabled selected>Select a sport</option>
-				        <option value="basketball" data-places="1,2,3">Basketball</option>
-				        <option value="soccer" data-places="4,5,6">Soccer</option>
-				        <option value="volleyball" data-places="7,8,9">Volleyball</option>
+				       
+				        <option  th:value="${sportDetail}" th:text="${sportDetail}"></option>
+				       
 				        <!-- Add more sport options here -->
 				    </select><br>
 				    
 				    <label for="place">Select a Place:</label>
 				    <select id="place" name="place" required>
 				        <option value="" disabled selected>Select a place</option>
+				        <option th:each="futsal : ${futsalNames}" th:value="${futsal.fName}" th:text="${futsal.fName}"></option>
 				        <!-- Places will be dynamically populated using JavaScript -->
 				    </select><br>
 				    

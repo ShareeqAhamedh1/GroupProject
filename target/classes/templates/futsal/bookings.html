@@ -45,7 +45,7 @@
 			<div class="6u 12u$(medium)">
 
 				<form action="addbooking" method="POST">
-				<input name="futsal_id" th:value="${futsal_id}" type="hidden">
+				<input name="futsal_id" th:value="${futsalId}" type="hidden">
 				
 					<label>Name:</label> <input type="text" id="name" name="name"
 						required> <br> 
@@ -128,8 +128,20 @@ function populateTimeOptions() {
     const endTime = 21;  // Ending hour (9 PM)
 
     for (let hour = startTime; hour <= endTime; hour++) {
-        timeSelect.innerHTML += `<option value="${hour}">${hour}:00 - ${hour+1}:00</option>`;
+        // Format the hour as hh:mm:ss
+        let hourString = hour < 10 ? '0' + hour : hour; // Add leading zero if hour is less than 10
+        
+        // Calculate the next hour
+        let nextHour = hour + 1;
+        let nextHourString = nextHour < 10 ? '0' + nextHour : nextHour;
+        
+        // Construct the option text
+        let optionText = `${hourString}:00:00 - ${nextHourString}:00:00`;
+        
+        // Append the option to the select element
+        timeSelect.innerHTML += `<option value="${hourString}:00:00">${optionText}</option>`;
     }
+
 }
 
 // Call the function initially to populate time options

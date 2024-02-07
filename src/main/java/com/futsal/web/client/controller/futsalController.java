@@ -1,9 +1,11 @@
 package com.futsal.web.client.controller;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,71 +53,97 @@ public class futsalController {
 	}
 	
 	@GetMapping("/home")
-	public ModelAndView home(ModelMap model) {
-		ModelAndView home=new ModelAndView("futsal/index.html");
-		
-		
-		List<Map<String,Object>> futsalDetails=FutsalAdminService.futsalDetails();
-		
-		model.addAttribute("futsalDetails", futsalDetails);
-		
-if (sessionUtilUser.getUserIdFromSession()!=null) {
-			
-			String userId = sessionUtilUser.getUserIdFromSession();
-			System.out.println(userId);
-			model.addAttribute("userLogged",userId);
-			 return home;
+	public ModelAndView home(ModelMap model, HttpServletRequest request) {
+	    ModelAndView home = new ModelAndView("/futsal/index.html");
+
+	    // Check if user is logged in and unset the loggedIn session attribute
+	    HttpSession session = request.getSession(false);
+	    if (sessionUtilUser.getUserIdFromSession() != null) {
+	        session.removeAttribute("loggedIn");
+	        String userId = sessionUtilUser.getUserIdFromSession();
+	        System.out.println(userId);
+	        model.addAttribute("userLogged", userId);
+	    }
+
+	    // Retrieve futsal details
+	    List<Map<String,Object>> futsalDetails = FutsalAdminService.futsalDetails();
+	    model.addAttribute("futsalDetails", futsalDetails);
+
+	    // Retrieve sport details and check for image
+	    List<Map<String,Object>> sportDetails = FutsalServices.getSports();
+	    if (!sportDetails.isEmpty()) {
+	        for(Map<String,Object> firstSport :sportDetails) {
+	        String image = (String) firstSport.get("first_image");
+	        if (image != null) {
+	        	 model.addAttribute("sportsDetails", sportDetails);
+	            model.addAttribute("imageSports", image);
+	            System.out.println(image);
+	        } else {
+	            System.out.println("Image sports is null");
+	        }
+	        }
+	    }
+
+	    // Check if user is logged in and add the loggedIn attribute to the model
+	    if (sessionUtilUser.getUserIdFromSession() != null) {
+	        model.addAttribute("loggedIn", true);
+	    }
+
+	    return home;
 	}
+
+	@GetMapping("/booking_new")
+	public String booking2(ModelMap model) {
+		 if (sessionUtilUser.getUserIdFromSession() != null) {
+		        String userId = sessionUtilUser.getUserIdFromSession();
+		        model.addAttribute("userLogged", userId);
 		
-		for (Map<String, Object> futsal : futsalDetails) {
-		    String futsalName = (String) futsal.get("fname");
-		    String email = (String) futsal.get("email");
-		    String contactNo = (String) futsal.get("contactno");
-		    String password = (String) futsal.get("password");
-		    String imagePath = (String) futsal.get("image");
-		    
-
-		    if (imagePath != null) {
-		        // Convert image data to Base64 String
-//		        String base64Image = Base64.getEncoder().encodeToString(imageData);
-
-		        // Do something with the retrieved values
-		        System.out.println("Futsal Name: " + futsalName);
-		        System.out.println("Email: " + email);
-		        System.out.println("Contact No: " + contactNo);
-		        System.out.println("Password: " + password);
-		        System.out.println("Image path: " + imagePath);
-		        
-		        model.addAttribute("imagePath", imagePath);
-		        return home;
-		        
-		    } else {
-		        System.out.println("Image data is null");
-		        return home;
+		
+		return "futsal/bookings3.html";
+		 } else {
+		        return "redirect:/futsal_home/login";
 		    }
-		    
-		}
-			
-		
-		
-		return home;
 	}
 	
 	@GetMapping("/booking")
-	public String booking(ModelMap model) {
-//		ModelAndView booking=new ModelAndView("futsal/bookings2.html");
-		if (sessionUtilUser.getUserIdFromSession()!=null) {
-			
-			String userId = sessionUtilUser.getUserIdFromSession();
-			System.out.println(userId);
-			model.addAttribute("userLogged",userId);
-			return "futsal/bookings";
-		}
-		
-		
-		return "redirect:/futsal_home/login";
+	public String booking(ModelMap model, @RequestParam(value="sports_type", required = false) String sports_type) {
+	    if (sessionUtilUser.getUserIdFromSession() != null) {
+	        String userId = sessionUtilUser.getUserIdFromSession();
+	        model.addAttribute("userLogged", userId);
+
+	        if (sports_type == null) {
+	            return "redirect:/futsal_home/booking_new";
+	        }
+
+	        SportDetails s_details = new SportDetails();
+	        s_details.setTypeOfSports(sports_type);
+	        System.out.println("Sports Type is " + s_details.getTypeOfSports());
+	        model.addAttribute("sportDetail", sports_type);
+	        System.out.println("Getting Futsal details");
+	        List<Map<String, Object>> getFutsalDetails = FutsalAdminDashboardService.getFutsalWithSportType(s_details);
+	        if (!getFutsalDetails.isEmpty()) {
+	            List<Map<String, Object>> futsalNames = new ArrayList<>();
+	            for (Map<String, Object> futsal : getFutsalDetails) {
+	                int f_id = (int) futsal.get("f_id");
+	                FutsalDetails f_details = new FutsalDetails();
+	                f_details.setFutsal_id(f_id);
+	                model.addAttribute("futsalId", f_details.getFutsal_id());
+
+	                List<Map<String, Object>> futsalDetails = FutsalAdminService.futsalDetails3(f_details);
+	                if (!futsalDetails.isEmpty()) {
+	                    futsalNames.addAll(futsalDetails);
+	                }
+	            }
+	            model.addAttribute("futsalNames", futsalNames);
+	        } else {
+	            return "redirect:/futsal_home/booking_new";
+	        }
+	        return "futsal/bookings2"; // Assuming this is the name of your Thymeleaf template
+	    }
+	    return "redirect:/futsal_home/login";
 	}
-	
+
+
 	@GetMapping("/bookings")
 	public String bookings(ModelMap model, @RequestParam(value = "futsal_id", required = false) Integer futsal_id) {
 	    if (sessionUtilUser.getUserIdFromSession() != null) {
@@ -123,7 +151,7 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 	        model.addAttribute("userLogged", userId);
 
 	        if (futsal_id == null) {
-	            return "redirect:/futsal_home/booking";
+	            return "redirect:/futsal_home/booking_new";
 	        }
 
 	        FutsalDetails f_detail = new FutsalDetails();
@@ -137,7 +165,7 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 	            int futsalId = (int) futsalData.get("futsalid");
 	            sport.setF_id(futsalId);
 	            List<Map<String, Object>> viewSportDetails = FutsalAdminDashboardService.sportsDetails2(sport);
-
+	            model.addAttribute("futsalId", futsalId);
 	            model.addAttribute("futsalDetails", viewFutsaldetails);
 	            model.addAttribute("sportDetails", viewSportDetails);
 
@@ -153,19 +181,26 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 	
 	@GetMapping("/about_us")
 	public ModelAndView about_us(ModelMap model) {
-		ModelAndView home=new ModelAndView("futsal/about_us.html");
-		return home;
+		ModelAndView aboutUs=new ModelAndView("/futsal/about_us.html");
+		if (sessionUtilUser.getUserIdFromSession()!=null) {
+			
+			String userId = sessionUtilUser.getUserIdFromSession();
+			System.out.println(userId);
+			model.addAttribute("userLogged",userId);
+			 return aboutUs;
+	}
+		return aboutUs;
 	}
 	
 	@GetMapping("/just")
 	public ModelAndView just(ModelMap model) {
-		ModelAndView home=new ModelAndView("futsal/just.html");
+		ModelAndView home=new ModelAndView("/futsal/just.html");
 		return home;
 	}
 	
 	@GetMapping("/login")
 	public ModelAndView login(@RequestParam(name = "UserExist", required = false, defaultValue = "false") String userExist,@RequestParam(name = "UserCreated", required = false, defaultValue = "false") String UserCreated, ModelMap model) {
-		ModelAndView login = new ModelAndView("futsal/login2.html");
+		ModelAndView login = new ModelAndView("/futsal/login2.html");
 	    
 	    // Use the "userExist" parameter as needed in your login page logic
 	    model.addAttribute("UserExist", userExist);
@@ -176,7 +211,7 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 	
 	@GetMapping("/signup")
 	public ModelAndView signup(ModelMap model, @RequestAttribute(name = "passwordNotMatching", required = false) String passwordNotMatching) {
-	    ModelAndView signup = new ModelAndView("futsal/signup.html");
+	    ModelAndView signup = new ModelAndView("/futsal/signup.html");
 	    
 //	    if (passwordNotMatching != null) {
 //	        // Add the attribute to the model if it exists
@@ -193,7 +228,7 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 	
 	@GetMapping("/myprofile")
 	public ModelAndView myprofile(ModelMap model) {
-		ModelAndView myprofile=new ModelAndView("futsal/myprofile.html");
+		ModelAndView myprofile=new ModelAndView("/futsal/myprofile.html");
 		return myprofile;
 	}
 	
@@ -262,7 +297,7 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 	
 	@GetMapping("/process_booking")
 	public ModelAndView process_booking(ModelMap model) {
-		ModelAndView home=new ModelAndView("futsal/checkout.html");
+		ModelAndView home=new ModelAndView("/futsal/checkout.html");
 		return home;
 	}
 	
@@ -272,66 +307,66 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 	    }
 	  
 	  
-	@PostMapping("/LoginValidate")
-	public String LoginValidate(ModelMap model,@RequestParam("email") String email,
-			@RequestParam("pass") String password ,RedirectAttributes redirectAttributes,
-			HttpSession session) {
-//		ModelAndView home=new ModelAndView("futsal/checkout.html");
-		
-		UserDetails user=new UserDetails();
-		user.setAddress(email);
-		user.setPassword(password);
-		
-		System.out.println("Login Details: "+user.getAddress()+" "+user.getPassword());
-		
-		String hashedPassword = passwordEncoder.encode(password);
-		user.setPassword(hashedPassword);
-		System.out.println("loged password "+hashedPassword);
-		
-		if (user.getAddress().equals("admin") && user.getAddress().equals("admin")) {
-			session.setAttribute("userName",user.getAddress());
-			return "redirect:/SuperAdmin/home";
-		}else {
-		List<Map<String, Object>> validateUser = FutsalServices.sendUserDetails(user);
-		
-		boolean isUserFound = validateUser.stream()
-		    .anyMatch(validateUserDetail -> 
-		        validateUserDetail.get("Email").toString().equalsIgnoreCase(user.getAddress())
-		    );
+	  @PostMapping("/LoginValidate")
+	  public String LoginValidate(@RequestParam("email") String email,
+	                              @RequestParam("pass") String password,
+	                              RedirectAttributes redirectAttributes,
+	                              HttpSession session) {
 
-		if (isUserFound) {
-			
-			for (Map<String,Object> userDetails:validateUser) {
-				System.out.println("User Found "+userDetails.get("Email"));
-				
-				String passwordFromDb=(String) userDetails.get("Password");
-				System.out.println("Password from db "+passwordFromDb);
-		
-				if (isPasswordValid(password, passwordFromDb)) {
-					System.out.println("User found with email: " + user.getAddress());
-				    model.addAttribute("UserFound",Boolean.TRUE);
-				    model.addAttribute("loggedIn",Boolean.TRUE);
-				    session.setAttribute("userId", String.valueOf(userDetails.get("UserId")));
-				    
-				    return "redirect:/futsal_home/home";
-				}else {
-					System.out.println(user.getPassword()+" "+passwordFromDb);
-					redirectAttributes.addFlashAttribute("UserNotFound", "UserNotFound");
-				    return "redirect:/futsal_home/login";
-				}
-		
-		    
-			}
-		    return "redirect:/futsal_home/home";
-			
-		} else {
-		    System.out.println("User not found with email: " + user.getAddress());
-		    redirectAttributes.addFlashAttribute("UserNotFound", "UserNotFound");
-		    return "redirect:/futsal_home/login";
-		}
-		
-		}
-	}
+	      UserDetails user = new UserDetails();
+	      user.setAddress(email);
+	      user.setPassword(password);
+
+	      System.out.println("Login Details: " + user.getAddress() + " " + user.getPassword());
+
+	      String hashedPassword = passwordEncoder.encode(password);
+	      user.setPassword(hashedPassword);
+	      System.out.println("loged password " + hashedPassword);
+
+	      if (user.getAddress().equals("admin") && user.getAddress().equals("admin")) {
+	          session.setAttribute("userName", user.getAddress());
+	          session.setAttribute("loggedIn", true); // Set loggedIn attribute in session
+	          return "redirect:/SuperAdmin/home";
+	      } else {
+	          List<Map<String, Object>> validateUser = FutsalServices.sendUserDetails(user);
+
+	          boolean isUserFound = validateUser.stream()
+	                  .anyMatch(validateUserDetail ->
+	                          validateUserDetail.get("Email").toString().equalsIgnoreCase(user.getAddress())
+	                  );
+
+	          if (isUserFound) {
+
+	              for (Map<String, Object> userDetails : validateUser) {
+	                  System.out.println("User Found " + userDetails.get("Email"));
+
+	                  String passwordFromDb = (String) userDetails.get("Password");
+	                  System.out.println("Password from db " + passwordFromDb);
+
+	                  if (isPasswordValid(password, passwordFromDb)) {
+	                      System.out.println("User found with email: " + user.getAddress());
+	                      session.setAttribute("userId", String.valueOf(userDetails.get("UserId")));
+	                      session.setAttribute("loggedIn", true); // Set loggedIn attribute in session
+	                      return "redirect:/futsal_home/home";
+	                  } else {
+	                      System.out.println(user.getPassword() + " " + passwordFromDb);
+	                      redirectAttributes.addFlashAttribute("UserNotFound", "UserNotFound");
+	                      return "redirect:/futsal_home/login";
+	                  }
+
+
+	              }
+	              return "redirect:/futsal_home/home";
+
+	          } else {
+	              System.out.println("User not found with email: " + user.getAddress());
+	              redirectAttributes.addFlashAttribute("UserNotFound", "UserNotFound");
+	              return "redirect:/futsal_home/login";
+	          }
+
+	      }
+	  }
+
 	
 	//add booking
 		@PostMapping("/addbooking")
@@ -347,6 +382,12 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 //			if(futsal_id==0) {
 //				
 //			}
+			
+			 if (sessionUtilUser.getUserIdFromSession() != null) {
+			        String userId = sessionUtilUser.getUserIdFromSession();
+			        model.addAttribute("userLogged", userId);
+
+			System.out.println(futsal_id);
 
 			BookingDetails bookingDetails = new BookingDetails(name, sport, place, date, time,futsal_id);
 			System.out.println(bookingDetails.toString());
@@ -375,14 +416,18 @@ if (sessionUtilUser.getUserIdFromSession()!=null) {
 			}else {
 				redAt.addAttribute("futsal_id",bookingDetails.getFutsal_id());
 		    return "redirect:/futsal_home/bookings"; 
+		    
 			}
+			 } else {
+			        return "redirect:/futsal_home/login";
+			    }
 		}
 		
 		// add checkout
 		
 		@GetMapping("/checkout")
 		public ModelAndView checkout(ModelMap model) {
-			ModelAndView checkout=new ModelAndView("futsal/checkout.html");
+			ModelAndView checkout=new ModelAndView("/futsal/checkout.html");
 			return checkout;
 		}
 		

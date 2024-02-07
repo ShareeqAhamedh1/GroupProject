@@ -73,15 +73,18 @@ public class FutsalAdminService {
 //		System.out.println("Checking Email of "+f_details.getFutsalEmail());
 		System.out.println("Deleting Futsal details");
 		String sql = "DELETE FROM futsaldb.futsaldetails WHERE futsalid LIKE ?";
-		
+		String sql2="DELETE FROM futsaldb.sportsdetails WHERE f_id LIKE ?";
+				
 		int deleteFutsal=jdbcTemplate.update(sql,f_details.getFutsal_id());
+		int deleteSport=jdbcTemplate.update(sql2,f_details.getFutsal_id());
 		System.out.println("Deleted "+deleteFutsal+" Rows from the futsaldetails DB");
+		System.out.println("Deleted "+deleteSport+" Rows from the sportsdetails DB");
 		return null;
 	}
 	
 	public static List<Map<String,Object>> futsalDetails3(FutsalDetails f_details){
 //		System.out.println("Checking Email of "+f_details.getFutsalEmail());
-		System.out.println("Getting Futsal details");
+		
 		String sql = "SELECT * FROM futsaldb.futsaldetails WHERE futsalid LIKE ?";
 		
 		 List<Map<String, Object>> getDetailsFromDb = jdbcTemplate.queryForList(sql,f_details.getFutsal_id());
@@ -107,4 +110,15 @@ public class FutsalAdminService {
 	    System.out.println("Updated " + updateFutsal + " rows in DB");
 	    return null;
 	}
+	
+	
+	public static List<Map<String,Object>> getAllBookings(){
+		String sql="SELECT * FROM futsaldb.bookingdetails ORDER BY bookingdetails.b_id DESC";
+		
+		List<Map<String,Object>> getBookings=jdbcTemplate.queryForList(sql);
+		
+		return getBookings;
+	}
+	
+	
 }

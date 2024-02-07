@@ -71,5 +71,13 @@ private static JdbcTemplate jdbcTemplate;
 //		System.out.println("Checked and got "+checkedDataRows+" Rows from the admin DB");
 		return getDetailsFromDb;
 	}
+	
+	public static List<Map<String,Object>> getFutsalWithSportType(SportDetails s_detail){
+		 
+		 String sql="SELECT f_id FROM sportsdetails WHERE typeofsport LIKE ?";
+		 List<Map<String,Object>> getFutsal=jdbcTemplate.queryForList(sql,"%" +s_detail.getTypeOfSports());
+		 
+		 return getFutsal;
+	 }
 
 }

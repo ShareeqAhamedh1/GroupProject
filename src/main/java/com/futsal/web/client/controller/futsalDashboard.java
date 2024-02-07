@@ -64,7 +64,7 @@ public class futsalDashboard {
 		@GetMapping("/home")
 		public ModelAndView home(ModelMap model) {
 		    if (sessionUtilFutsal.getIdFromSession() != null) {
-		        ModelAndView home = new ModelAndView("futsal/admin/index.html");
+		        ModelAndView home = new ModelAndView("/futsal/admin/index.html");
 
 		        String f_id = sessionUtilFutsal.getIdFromSession();
 //		        String userName = sessionUtil.getUserNameFromSession();
@@ -77,7 +77,7 @@ public class futsalDashboard {
 
 		        return home;
 		    } else {
-		        ModelAndView signout = new ModelAndView("futsal/admin/signin.html");
+		        ModelAndView signout = new ModelAndView("/futsal/admin/signin.html");
 		        return signout;
 		    }
 		}
@@ -86,11 +86,11 @@ public class futsalDashboard {
 		public ModelAndView form(ModelMap model) {
 			
 			if(sessionUtilFutsal.getIdFromSession()!=null) {
-			ModelAndView form=new ModelAndView("futsal/admin/form.html");
+			ModelAndView form=new ModelAndView("/futsal/admin/form.html");
 			return form;
 			
 			}else {
-				ModelAndView signout=new ModelAndView("futsal/admin/signin.html");
+				ModelAndView signout=new ModelAndView("/futsal/admin/signin.html");
 				return signout;
 			}
 		}
@@ -106,11 +106,11 @@ public class futsalDashboard {
 				
 				model.addAttribute("sportDetails", viewSportDetails);
 				
-			ModelAndView table=new ModelAndView("futsal/admin/table.html");
+			ModelAndView table=new ModelAndView("/futsal/admin/table.html");
 			return table;
 			
 			}else {
-				ModelAndView signout=new ModelAndView("futsal/admin/signin.html");
+				ModelAndView signout=new ModelAndView("/futsal/admin/signin.html");
 				return signout;
 			}
 		}
@@ -119,28 +119,28 @@ public class futsalDashboard {
 			
 
 			if(sessionUtilFutsal.getIdFromSession()!=null) {
-			ModelAndView chart=new ModelAndView("futsal/admin/chart.html");
+			ModelAndView chart=new ModelAndView("/futsal/admin/chart.html");
 			return chart;
 			
 			}else {
-				ModelAndView signout=new ModelAndView("futsal/admin/signin.html");
+				ModelAndView signout=new ModelAndView("/futsal/admin/signin.html");
 				return signout;
 			}
 		}
 		@GetMapping("/signin")
 		public ModelAndView signin(ModelMap model) {
-			ModelAndView signin=new ModelAndView("futsal/admin/signin.html");
+			ModelAndView signin=new ModelAndView("/futsal/admin/signin.html");
 			return signin;
 		}
 		@GetMapping("/signup")
 		public ModelAndView signup(ModelMap model) {
-			ModelAndView signup=new ModelAndView("futsal/admin/signup.html");
+			ModelAndView signup=new ModelAndView("/futsal/admin/signup.html");
 			return signup;
 		}
 		
 		@GetMapping("/404")
 		public ModelAndView error(ModelMap model) {
-			ModelAndView error=new ModelAndView("futsal/admin/404.html");
+			ModelAndView error=new ModelAndView("/futsal/admin/404.html");
 			return error;
 		}
 		
@@ -214,7 +214,7 @@ public class futsalDashboard {
 		    // Invalidate the entire session
 		    httpSessionFutsal.invalidate();
 
-		    ModelAndView signout = new ModelAndView("futsal/super_admin/signin.html");
+		    ModelAndView signout = new ModelAndView("/futsal/super_admin/signin.html");
 		    return signout;
 		}
 		

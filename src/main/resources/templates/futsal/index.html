@@ -84,8 +84,24 @@
 			<div class="inner"></div>
 		</article>
 	</section>
-	
-	
+
+<!-- <div th:if="${loggedIn}">
+					<div class="alert alert-danger" role="alert">Invalid Email or Password
+						</div>
+						</div> -->
+						
+		
+		<!-- <div id="success-popup" class="popup" th:if="${loggedIn}">
+    <div class="popup-content">
+        <span class="close-popup"></span>
+        <h1 class="alert">Success!</h1>
+        <p style="color:green;">You have successfully Logged In</p>
+        <button class="button-box" id="continue-btn">continue</button>
+    </div>
+</div>	 -->
+
+		 
+		
 
 	<!-- One -->
 	<section id="one" class="wrapper style2">
@@ -96,11 +112,12 @@
 				<h2>Select any Sports</h2>
 			</header>
 			<div class="gallery">
-				<div>
+				<div th:each="sports : ${sportsDetails}">
 					<div class="image fit">
-						<a href="bookings"><img src="/futsal/images/imgn8.jpg" alt="" height="200"/></a>
+						<a th:href="@{/futsal_home/booking(sports_type=${sports.typeofsport})}"><img th:src="${sports.first_image}" alt="" height="200"/></a>
 					</div>
-				</div>
+					
+				<!-- </div>
 				<div>
 					<div class="image fit" >
 						<a href="bookings"><img src="/futsal/images/imgn7.jpg" alt="" height="200"/></a>
@@ -115,10 +132,12 @@
 					<div class="image fit">
 						<a href="bookings"><img src="/futsal/images/imgn9.jpg" alt="" height="200"/></a>
 					</div>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</section>
+	
+
 
 	<!-- Two -->
 	<section id="two" class="wrapper style3" >
@@ -191,6 +210,28 @@
 	<script src="/futsal/js/skel.min.js"></script>
 	<script src="/futsal/js/util.js"></script>
 	<script src="/futsal/js/main.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const successPopup = document.getElementById("success-popup");
+    const continueBtn = document.getElementById("continue-btn");
+    const closeBtn = document.querySelector(".close-popup");
+
+    // Show the popup when the page loads
+    successPopup.style.display = "block";
+
+    // Close the popup when the close button is clicked
+    closeBtn.addEventListener("click", function() {
+        successPopup.style.display = "none";
+    });
+
+    // Alternatively, close the popup when the continue button is clicked
+    continueBtn.addEventListener("click", function() {
+        successPopup.style.display = "none";
+    });
+});
+
+</script>
 
 </body>
 </html>

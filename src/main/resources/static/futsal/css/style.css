@@ -4323,6 +4323,87 @@
 		/* My css */
 	
 
-		
+
+.popup {
+    display: none; /* Initially hide the popup */
+    position: fixed; /* Position the popup fixed on the screen */
+    top: 50%; /* Center the popup vertically */
+    left: 50%; /* Center the popup horizontally */
+    transform: translate(-50%, -50%); /* Center the popup both vertically and horizontally */
+    z-index: 9999; /* Set a high z-index to ensure the popup appears on top of other content */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.popup-content {
+    position: relative;
+}
+
+.close-popup {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.close-popup:hover {
+    background-color: #ccc; /* Change the background color on hover */
+}
+
+.alert {
+    color: #fff; /* Set text color for alert */
+    background-color: #28a745; /* Set background color for alert */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.button-box {
+    background-color: #007bff; /* Set default background color for button */
+    color: #fff; /* Set text color for button */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button-box:hover {
+    background-color: #0056b3; /* Change the background color on hover */
+}
+
+
+/* 
+.popup {
+	background-color:green;
+    display: none; Initially hide the popup
+    position: fixed; Position the popup fixed on the screen
+    top: 50%; Center the popup vertically
+    left: 50%; Center the popup horizontally
+    transform: translate(-50%, -50%); Center the popup both vertically and horizontally
+    z-index: 9999; Set a high z-index to ensure the popup appears on top of other content
+    background-color: rgba(34,187,51); Semi-transparent background
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.popup-content {
+    position: relative;
+}
+
+.close-popup {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+ */
 
 		

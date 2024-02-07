@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.futsal.web.client.models.BookingDetails;
 import com.futsal.web.client.models.CheckoutDetails;
+import com.futsal.web.client.models.SportDetails;
 import com.futsal.web.client.models.UserDetails;
 
 @Service
@@ -88,6 +89,16 @@ public class FutsalServices {
 		 
 		 return (Integer) getDetailsFromDb;
 	 }
+	 
+	 public static List<Map<String,Object>> getSports(){
+		 
+		 
+		 String sql ="SELECT t.typeofsport, t.frequency,(SELECT image FROM sportsdetails WHERE typeofsport = t.typeofsport LIMIT 1) AS first_image FROM (SELECT typeofsport, COUNT(typeofsport) AS frequency FROM sportsdetails GROUP BY typeofsport ORDER BY frequency DESC LIMIT 4 ) AS t";
+		 List<Map<String,Object>> getSportDetails=jdbcTemplate.queryForList(sql);
+		 return getSportDetails;
+	 }
+	 
+	 
 
 	 
 
