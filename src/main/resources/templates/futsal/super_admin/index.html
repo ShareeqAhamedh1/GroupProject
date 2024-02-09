@@ -181,7 +181,7 @@
                         <table class="table text-start align-middle table-bordered table-hover mb-0">
                             <thead>
                                 <tr class="text-white">
-                                    <th scope="col"><input class="form-check-input" type="checkbox"></th>
+                                    
                                     <th scope="col">Date</th>
                                     <th scope="col">Customer Name</th>
                                     <th scope="col">Booked Sport</th>
@@ -193,13 +193,16 @@
                             </thead>
                             <tbody>
                                 <tr th:each="booking : ${bookingDetails}">
-                                    <td><input class="form-check-input" type="checkbox"></td>
+                                  
                                     <td th:text="${booking.booking_current_time}"></td>
                                     <td th:text="${booking.b_name}"></td>
                                     <td th:text="${booking.b_sport}"></td>
                                     <td th:text="${booking.b_place}"></td>
                                     <td th:text="${booking.b_date}"></td>
                                     <td th:text="${booking.b_time}"></td>
+                                    <td th:if="${booking.status == null}">On Approve</td>
+                                     <td th:if="${booking.status == 1}">Paid</td>
+                                      <td th:if="${booking.status == 2}">Pending</td>
                                     <td></td>
                                 </tr>
                                 

@@ -57,12 +57,27 @@ public class futsalController {
 	    ModelAndView home = new ModelAndView("/futsal/index.html");
 
 	    // Check if user is logged in and unset the loggedIn session attribute
-	    HttpSession session = request.getSession(false);
+	  
 	    if (sessionUtilUser.getUserIdFromSession() != null) {
-	        session.removeAttribute("loggedIn");
+	      
 	        String userId = sessionUtilUser.getUserIdFromSession();
 	        System.out.println(userId);
 	        model.addAttribute("userLogged", userId);
+	    }
+	    
+	    if (request.getAttribute("loggedIn") != null) {
+	        boolean loggedIn = (boolean) request.getAttribute("loggedIn");
+	        model.addAttribute("loggedIn", loggedIn);
+	    }
+	    
+	    if (request.getAttribute("loggedOut") != null) {
+	        boolean loggedOut = (boolean) request.getAttribute("loggedOut");
+	        model.addAttribute("loggedOut", loggedOut);
+	    }
+	    
+	    if (request.getAttribute("other_pay") != null) {
+	        boolean otherPay = (boolean) request.getAttribute("other_pay");
+	        model.addAttribute("other_pay", otherPay);
 	    }
 
 	    // Retrieve futsal details
@@ -85,9 +100,7 @@ public class futsalController {
 	    }
 
 	    // Check if user is logged in and add the loggedIn attribute to the model
-	    if (sessionUtilUser.getUserIdFromSession() != null) {
-	        model.addAttribute("loggedIn", true);
-	    }
+	   
 
 	    return home;
 	}
@@ -296,9 +309,19 @@ public class futsalController {
 
 	
 	@GetMapping("/process_booking")
-	public ModelAndView process_booking(ModelMap model) {
-		ModelAndView home=new ModelAndView("/futsal/checkout.html");
-		return home;
+	public String process_booking(ModelMap model) {
+		
+if (sessionUtilUser.getUserIdFromSession()!=null) {
+			
+			String userId = sessionUtilUser.getUserIdFromSession();
+			System.out.println(userId);
+			model.addAttribute("userLogged",userId);
+//		ModelAndView home=new ModelAndView("/futsal/checkout.html");
+		return "/futsal/checkout.html";
+}else {
+	 return "redirect:/futsal_home/login";
+}
+
 	}
 	
 	
@@ -310,7 +333,7 @@ public class futsalController {
 	  @PostMapping("/LoginValidate")
 	  public String LoginValidate(@RequestParam("email") String email,
 	                              @RequestParam("pass") String password,
-	                              RedirectAttributes redirectAttributes,
+	                              RedirectAttributes redAt,
 	                              HttpSession session) {
 
 	      UserDetails user = new UserDetails();
@@ -346,11 +369,11 @@ public class futsalController {
 	                  if (isPasswordValid(password, passwordFromDb)) {
 	                      System.out.println("User found with email: " + user.getAddress());
 	                      session.setAttribute("userId", String.valueOf(userDetails.get("UserId")));
-	                      session.setAttribute("loggedIn", true); // Set loggedIn attribute in session
+	                      redAt.addFlashAttribute("loggedIn",true);
 	                      return "redirect:/futsal_home/home";
 	                  } else {
 	                      System.out.println(user.getPassword() + " " + passwordFromDb);
-	                      redirectAttributes.addFlashAttribute("UserNotFound", "UserNotFound");
+	                      redAt.addFlashAttribute("UserNotFound", "UserNotFound");
 	                      return "redirect:/futsal_home/login";
 	                  }
 
@@ -360,7 +383,7 @@ public class futsalController {
 
 	          } else {
 	              System.out.println("User not found with email: " + user.getAddress());
-	              redirectAttributes.addFlashAttribute("UserNotFound", "UserNotFound");
+	              redAt.addFlashAttribute("UserNotFound", "UserNotFound");
 	              return "redirect:/futsal_home/login";
 	          }
 
@@ -377,7 +400,8 @@ public class futsalController {
 								    @RequestParam("place") String place,
 								    @RequestParam("date") String date,
 								    @RequestParam("time") String time,
-								    @RequestParam("futsal_id") int futsal_id,RedirectAttributes redAt) {
+								    @RequestParam("futsal_id") int futsal_id,
+								    @RequestParam("payment") int payment,RedirectAttributes redAt) {
 			
 //			if(futsal_id==0) {
 //				
@@ -389,7 +413,7 @@ public class futsalController {
 
 			System.out.println(futsal_id);
 
-			BookingDetails bookingDetails = new BookingDetails(name, sport, place, date, time,futsal_id);
+			BookingDetails bookingDetails = new BookingDetails(name, sport, place, date, time,futsal_id,payment);
 			System.out.println(bookingDetails.toString());
 			
 			List<Map<String, Object>> addBooking = FutsalServices.getBookingDetails(bookingDetails);
@@ -411,8 +435,13 @@ public class futsalController {
 				int booking_id =  (int) bookingID.get("b_id");
 				System.out.println(booking_id);
 				
+				if(payment==1) {
 				redAt.addFlashAttribute("booking_id", booking_id);
-				return "redirect:/futsal_home/process_booking"; 
+				return "redirect:/futsal_home/process_booking";
+				}else {
+					redAt.addFlashAttribute("other_pay",true);
+					 return "redirect:/futsal_home/home"; 
+				}
 			}else {
 				redAt.addAttribute("futsal_id",bookingDetails.getFutsal_id());
 		    return "redirect:/futsal_home/bookings"; 
@@ -466,7 +495,7 @@ public class futsalController {
 			
 			
 			@GetMapping("/logout")
-			public String logout(ModelMap model) {
+			public String logout(ModelMap model,RedirectAttributes redAt) {
 			    // Retrieve the attribute from the session
 			    futsalController userSession = (futsalController) httpSessionUser.getAttribute(sessionUtilUser.getUserIdFromSession());
 
@@ -477,7 +506,7 @@ public class futsalController {
 
 			    // Invalidate the entire session
 			    httpSessionUser.invalidate();
-
+			    redAt.addFlashAttribute("loggedOut",true);
 			   
 			    return "redirect:/futsal_home/home";
 			}

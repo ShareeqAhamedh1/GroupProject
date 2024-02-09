@@ -7,10 +7,24 @@ public class FutsalDetails {
 	private String futsalName;
 	private String futsalEmail;
 	private String contactNo;
+	private String state;
+	private String address;
 	private String password;
 	private String image;
 	
 	
+	public String getState() {
+		return state;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
 	public int getFutsal_id() {
 		return futsal_id;
 	}

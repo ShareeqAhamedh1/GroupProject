@@ -14,10 +14,10 @@ public class SessionUtilFutsal {
 
 //  ... (other methods)
 
-    public String getIdFromSession() {
-        HttpSession session = requestFutsal.getSession(false); // Do not create a new session if it doesn't exist
-        if (session != null) {
-            Object futsalId = session.getAttribute("futsalId");
+    public String getIdFromSessionFutsal() {
+        HttpSession sessionFutsal = requestFutsal.getSession(false); // Do not create a new session if it doesn't exist
+        if (sessionFutsal != null) {
+            Object futsalId = sessionFutsal.getAttribute("futsalId");
             if (futsalId != null) {
                 if (futsalId instanceof String) {
                     return (String) futsalId;

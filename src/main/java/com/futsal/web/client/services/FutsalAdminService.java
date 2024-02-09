@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import com.futsal.web.client.models.AdminDetails;
+import com.futsal.web.client.models.BookingDetails;
 import com.futsal.web.client.models.FutsalDetails;
 
 @Service
@@ -43,8 +44,8 @@ public class FutsalAdminService {
 	public static List<Map<String,Object>> addFutsal(FutsalDetails f_details){
 		System.out.println("In adding Futsal");
 		
-		String sql="INSERT INTO futsaldb.futsaldetails (fname,email,contactno,password,image) VALUES (?,?,?,?,?)";
-		int insertFutsal=jdbcTemplate.update(sql,f_details.getFutsalName(),f_details.getFutsalEmail(),f_details.getContactNo(),f_details.getPassword(),f_details.getImage() );
+		String sql="INSERT INTO futsaldb.futsaldetails (fname,email,contactno,address,state,password,image) VALUES (?,?,?,?,?,?,?)";
+		int insertFutsal=jdbcTemplate.update(sql,f_details.getFutsalName(),f_details.getFutsalEmail(),f_details.getContactNo(),f_details.getAddress(),f_details.getState(),f_details.getPassword(),f_details.getImage() );
 		System.out.println("Inserted "+insertFutsal +" rows into DB");
 		return null;
 	}
@@ -119,6 +120,34 @@ public class FutsalAdminService {
 		
 		return getBookings;
 	}
+	
+	public static List<Map<String,Object>> getBookingsForFutsal(FutsalDetails f_details){
+		String sql="SELECT * FROM futsaldb.bookingdetails WHERE futsal_id LIKE ? ORDER BY bookingdetails.b_id";
+		
+		List<Map<String,Object>> getBookingDetails=jdbcTemplate.queryForList(sql,f_details.getFutsal_id());
+		
+		return getBookingDetails;
+	}
+	public static List<Map<String,Object>> updateBookingStatus(BookingDetails b_details){
+		
+		
+		String sql="UPDATE futsaldb.bookingdetails SET status=? WHERE b_id=?";
+		int updateBooking=jdbcTemplate.update(sql,b_details.getPayment(),b_details.getB_id());
+		System.out.println("Updated " + updateBooking + " rows in DB");
+		return null;
+	}
+	
+	public static List<Map<String,Object>> cancelBooking(BookingDetails b_details){
+		
+		
+		String sql="DELETE FROM futsaldb.bookingdetails WHERE b_id=?";
+		int deleteBooking=jdbcTemplate.update(sql,b_details.getB_id());
+		System.out.println("Deleted " + deleteBooking + " rows in DB");
+		return null;
+	}
+	
+	
+	
 	
 	
 }

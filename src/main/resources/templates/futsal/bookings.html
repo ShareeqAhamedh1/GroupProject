@@ -22,7 +22,8 @@
 			<li><a href="home">Home</a></li>
 			<li><a href="booking">Booking</a></li>
 			<li><a href="about_us">About us</a></li>
-			<li><a href="login">Log In</a></li>
+			<li th:if="${userLogged}!=null"><a href="logout">Log Out</a></li>
+			<li th:if="${userLogged}==null"><a href="login">Log in</a></li>
 		</ul>
 	</nav>
 
@@ -69,8 +70,16 @@
 					<label for="date">Date:</label> 
 					<input type="date" name="date">
 					<br>
-					<br>
-					<br>
+					
+					<label for="payment">Payment Method:</label> <select id="payment" name="payment" required>
+						<option value="" disabled selected>Select a payment method</option>
+						
+						 <option value="1">Via Website</option>
+						<option value="2">Other</option> 
+						<!-- Add more sport options here -->
+					</select><br>
+					
+					
 					
 					<label for="time" >Time:</label> 
 					<select id="time" name="time"
@@ -120,38 +129,42 @@
 
 <script>
 // Function to populate time options with 1-hour gap
-function populateTimeOptions() {
-    const timeSelect = document.getElementById("time");
-    timeSelect.innerHTML = "<option value='' disabled selected>Select a time</option>";
-    
-    const startTime = 8; // Starting hour (8 AM)
-    const endTime = 21;  // Ending hour (9 PM)
+ function populateTimeOptions() {
+        const timeSelect = document.getElementById("time");
+        timeSelect.innerHTML = "<option value='' disabled selected>Select a time</option>";
+        
+        const startTime = 8; // Starting hour (8 AM)
+        const endTime = 21;  // Ending hour (9 PM)
 
-    for (let hour = startTime; hour <= endTime; hour++) {
-        // Format the hour as hh:mm:ss
-        let hourString = hour < 10 ? '0' + hour : hour; // Add leading zero if hour is less than 10
-        
-        // Calculate the next hour
-        let nextHour = hour + 1;
-        let nextHourString = nextHour < 10 ? '0' + nextHour : nextHour;
-        
-        // Construct the option text
-        let optionText = `${hourString}:00:00 - ${nextHourString}:00:00`;
-        
-        // Append the option to the select element
-        timeSelect.innerHTML += `<option value="${hourString}:00:00">${optionText}</option>`;
+        for (let hour = startTime; hour <= endTime; hour++) {
+            const formattedHour = hour.toString().padStart(2, '0');
+            timeSelect.innerHTML += `<option value="${formattedHour}">${formattedHour}:00 - ${formattedHour}:59</option>`;
+        }
     }
 
-}
-
-// Call the function initially to populate time options
-populateTimeOptions();
-
-// Event listener to dynamically update time options when the date changes (optional)
-const dateInput = document.getElementById("date");
-dateInput.addEventListener("change", () => {
+    // Call the function initially to populate time options
     populateTimeOptions();
-});
+
+    // Event listener to dynamically update time options when the date changes (optional)
+    const dateInput = document.getElementById("date");
+    dateInput.addEventListener("change", () => {
+        populateTimeOptions();
+    });
+
+    $(document).on('change', '#sport', function() {
+        var selectedSport = $(this).val();
+        var places = $('option:selected', this).data('places').split(',');
+
+        // Clear and populate the places dropdown
+        var placeDropdown = $('#place');
+        placeDropdown.empty();
+        $.each(places, function(index, place) {
+            placeDropdown.append($('<option>', {
+                value: place,
+                text: 'Place ' + place
+            }));
+        });
+    });
 </script>
 
 </body>

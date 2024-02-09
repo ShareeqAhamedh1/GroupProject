@@ -27,7 +27,8 @@
 			<li><a href="home">Home</a></li>
 			<li><a href="booking">Booking</a></li>
 			<li><a href="about_us">About us</a></li>
-			<li><a href="login">Log In</a></li>
+			<li th:if="${userLogged}!=null"><a href="logout">Log Out</a></li>
+			<li th:if="${userLogged}==null"><a href="login">Log in</a></li>
 		</ul>
 	</nav>
 
@@ -35,8 +36,8 @@
 	<section id="One" class="wrapper style3">
 		<div class="inner">
 			<header class="align-center">
-				<p>Sed amet nulla</p>
-				<h2>Elements</h2>
+				<p>Life is a journey; make sure you pack your dreams.</p>
+				<h2>Checkout</h2>
 			</header>
 		</div>
 	</section>

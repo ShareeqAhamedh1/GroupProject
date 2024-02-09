@@ -61,8 +61,8 @@ public class FutsalServices {
 	 
 	 public static  List<Map<String,Object>> getBookingDetails(BookingDetails bookingDetails){
 		 System.out.println("Im in Service class :"+bookingDetails.toString());
-		 String sql = "INSERT INTO futsaldb.bookingDetails (b_name, b_sport, b_place, b_date, b_time,futsal_id) VALUES (?, ?, ?, ?, ?,?)";
-		 int insertedDataRows = jdbcTemplate.update(sql, bookingDetails.getName(), bookingDetails.getSport(), bookingDetails.getPlace(), bookingDetails.getDate(), bookingDetails.getTime(),bookingDetails.getFutsal_id());
+		 String sql = "INSERT INTO futsaldb.bookingDetails (b_name, b_sport, b_place, b_date, b_time,futsal_id,payment_method) VALUES (?, ?, ?, ?, ?,?,?)";
+		 int insertedDataRows = jdbcTemplate.update(sql, bookingDetails.getName(), bookingDetails.getSport(), bookingDetails.getPlace(), bookingDetails.getDate(), bookingDetails.getTime(),bookingDetails.getFutsal_id(),bookingDetails.getPayment());
 		 System.out.println("inserted "+insertedDataRows+" Rows to the table");
 		 return null;
 	 }

@@ -24,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.futsal.web.client.models.AdminDetails;
+import com.futsal.web.client.models.BookingDetails;
 import com.futsal.web.client.models.FutsalDetails;
 import com.futsal.web.client.models.SportDetails;
 import com.futsal.web.client.services.FutsalAdminDashboardService;
@@ -62,31 +63,78 @@ public class futsalDashboard {
 		}
 		
 		@GetMapping("/home")
-		public ModelAndView home(ModelMap model) {
-		    if (sessionUtilFutsal.getIdFromSession() != null) {
-		        ModelAndView home = new ModelAndView("/futsal/admin/index.html");
-
-		        String f_id = sessionUtilFutsal.getIdFromSession();
-//		        String userName = sessionUtil.getUserNameFromSession();
+		public ModelAndView home(ModelMap model, HttpServletRequest request) {
+		    ModelAndView modelAndView = new ModelAndView();
+		    
+		    if (sessionUtilFutsal.getIdFromSessionFutsal() != null) {
+		        modelAndView.setViewName("/futsal/admin/index.html");
 		        
-		        // Add user-related attributes to the model
-//		        home.addObject("userName", userName);
-		        home.addObject("f_id", f_id);
-//		        System.out.println(userName);
+		          
+		      
+		        
+		        String f_id = sessionUtilFutsal.getIdFromSessionFutsal();
+		        int futsal_id=Integer.valueOf(f_id);
+		        modelAndView.addObject("f_id", f_id);
+		        
+		        
+		        model.addAttribute("futsalLoggedIn", f_id);
+		        FutsalDetails futsal=new FutsalDetails();
+		        futsal.setFutsal_id(futsal_id);
+		        
+		        List<Map<String,Object>> futsalDetails=FutsalAdminService.futsalDetails3(futsal);
+		        
+		        Map<String,Object> futsaldet=futsalDetails.get(0);
+		        
+		        String futsalName=(String) futsaldet.get("fname");
+		        
+		        model.addAttribute("fname",futsalName);
+		        
+//		        System.out.println(futsalDetails);
 		        System.out.println(f_id);
+		        
+		        
+		        
+//		        Booking details
+		        List<Map<String,Object>> bookingDetails=FutsalAdminService.getBookingsForFutsal(futsal);
+		        System.out.println(bookingDetails);
+		        List<Map<String,Object>> bookings=bookingDetails;
+		        model.addAttribute("bookings",bookings);
 
-		        return home;
+		        return modelAndView;
 		    } else {
-		        ModelAndView signout = new ModelAndView("/futsal/admin/signin.html");
-		        return signout;
+		        modelAndView.setViewName("/futsal/admin/signin.html");
+		        return modelAndView;
 		    }
 		}
+
 	
 		@GetMapping("/form")
 		public ModelAndView form(ModelMap model) {
 			
-			if(sessionUtilFutsal.getIdFromSession()!=null) {
+			if(sessionUtilFutsal.getIdFromSessionFutsal()!=null) {
 			ModelAndView form=new ModelAndView("/futsal/admin/form.html");
+			
+			 String f_id = sessionUtilFutsal.getIdFromSessionFutsal();
+		        int futsal_id=Integer.valueOf(f_id);
+		      
+		        
+		        
+		        model.addAttribute("futsalLoggedIn", f_id);
+		        FutsalDetails futsal=new FutsalDetails();
+		        futsal.setFutsal_id(futsal_id);
+		        
+		        List<Map<String,Object>> futsalDetails=FutsalAdminService.futsalDetails3(futsal);
+		        
+		        Map<String,Object> futsaldet=futsalDetails.get(0);
+		        
+		        String futsalName=(String) futsaldet.get("fname");
+		        
+		        model.addAttribute("fname",futsalName);
+		        
+		        
+		        
+
+		        
 			return form;
 			
 			}else {
@@ -96,11 +144,27 @@ public class futsalDashboard {
 		}
 		@GetMapping("/table")
 		public ModelAndView table(ModelMap model) {
-			if(sessionUtilFutsal.getIdFromSession()!=null) {
+			if(sessionUtilFutsal.getIdFromSessionFutsal()!=null) {
 			
 				SportDetails sport =new SportDetails();
-				String f_id_s = sessionUtilFutsal.getIdFromSession();
+				String f_id_s = sessionUtilFutsal.getIdFromSessionFutsal();
+				String f_ids = sessionUtilFutsal.getIdFromSessionFutsal();
+				
+				
+		        model.addAttribute("futsalLoggedIn", f_ids);
 				int f_id = Integer.parseInt(f_id_s);
+				
+				 FutsalDetails futsal=new FutsalDetails();
+			        futsal.setFutsal_id(f_id);
+			        
+			        List<Map<String,Object>> futsalDetails=FutsalAdminService.futsalDetails3(futsal);
+			        
+			        Map<String,Object> futsaldet=futsalDetails.get(0);
+			        
+			        String futsalName=(String) futsaldet.get("fname");
+			        
+			        model.addAttribute("fname",futsalName);
+				
 				sport.setF_id(f_id);
 				List<Map<String,Object>> viewSportDetails=FutsalAdminDashboardService.sportsDetails2(sport);
 				
@@ -118,8 +182,10 @@ public class futsalDashboard {
 		public ModelAndView chart(ModelMap model) {
 			
 
-			if(sessionUtilFutsal.getIdFromSession()!=null) {
+			if(sessionUtilFutsal.getIdFromSessionFutsal()!=null) {
 			ModelAndView chart=new ModelAndView("/futsal/admin/chart.html");
+			String f_id = sessionUtilFutsal.getIdFromSessionFutsal();
+	        model.addAttribute("futsalLoggedIn", f_id);
 			return chart;
 			
 			}else {
@@ -151,7 +217,7 @@ public class futsalDashboard {
 		
 		@PostMapping("/signinValidate")
 		public String signinValidate(@RequestParam("email") String email,@RequestParam("password") String password, ModelMap model
-				,HttpSession session,RedirectAttributes redirectAttributes) {
+				,HttpSession session,RedirectAttributes redAt) {
 				
 			AdminDetails admin=new AdminDetails();
 			admin.setEmail(email);
@@ -170,7 +236,7 @@ public class futsalDashboard {
 			
 			if (isAdminFound) {
 			    for (Map<String, Object> adminDetails : CheckAdmin) {
-			        System.out.println("Admin Found " + admin.getAdminName());
+//			        System.out.println("Admin Found " + admin.getAdminName());
 			        String passwordFromDB = String.valueOf(adminDetails.get("password"));
 
 			        if (isPasswordValid(password, passwordFromDB)) {
@@ -178,15 +244,16 @@ public class futsalDashboard {
 			            System.out.println("User found with email: " + admin.getEmail());
 			            model.addAttribute("UserFound", Boolean.TRUE);
 			            model.addAttribute("loggedIn", Boolean.TRUE);
+			            redAt.addFlashAttribute("futsalLoggedIn",true);
 //			            session.setAttribute("userName", admin.getEmail());
 			            return "redirect:/AdminDashboard/home";
 			        } else {
-			            redirectAttributes.addFlashAttribute("UserNotFound", "UserNotFound");
+			            redAt.addFlashAttribute("UserNotFound", "UserNotFound");
 			            return "redirect:/AdminDashboard/signin";
 			        }
 			    }
 			} else {
-			    redirectAttributes.addFlashAttribute("UserNotExisted", "UserNotExisted");
+			    redAt.addFlashAttribute("UserNotExisted", "UserNotExisted");
 			    return "redirect:/AdminDashboard/signin";
 			}
 
@@ -204,7 +271,7 @@ public class futsalDashboard {
 		@GetMapping("/signout")
 		public ModelAndView signout(ModelMap model) {
 		    // Retrieve the attribute from the session
-		    futsalDashboard futsalSession = (futsalDashboard) httpSessionFutsal.getAttribute(sessionUtilFutsal.getIdFromSession());
+		    futsalDashboard futsalSession = (futsalDashboard) httpSessionFutsal.getAttribute(sessionUtilFutsal.getIdFromSessionFutsal());
 
 		    // Check if the attribute is not null before invalidating
 		    if (futsalSession != null) {
@@ -244,7 +311,7 @@ public class futsalDashboard {
 			SportDetails s_details=new SportDetails();
 		
 			s_details.setTypeOfSports(typeOfSport);
-			String f_id_s = sessionUtilFutsal.getIdFromSession();
+			String f_id_s = sessionUtilFutsal.getIdFromSessionFutsal();
 			int f_id = Integer.parseInt(f_id_s);
 			s_details.setF_id(f_id);
 //			f_details.setImage(imageFile);
@@ -332,6 +399,36 @@ public class futsalDashboard {
 
 		    System.out.println(isSportFound);
 		    return "redirect:/AdminDashboard/table";
+		}
+		
+		
+		@GetMapping("/editBooking")
+		public String editBooking(ModelMap model,@RequestParam("b_id") int b_id,@RequestParam("b_method") int b_method,RedirectAttributes redAt) {
+			
+			BookingDetails b_details=new BookingDetails();
+			
+			b_details.setB_id(b_id);
+			b_details.setPayment(b_method);
+			
+			System.out.println(b_details.getB_id()+" ,"+b_details.getPayment());
+			
+			List<Map<String,Object>> updateBooking=FutsalAdminService.updateBookingStatus(b_details);
+			
+			redAt.addAttribute("updated",true);
+			return "redirect:/AdminDashboard/home";
+		}
+		
+		@GetMapping("/cancelBooking")
+		public String cancelBooking(ModelMap model,@RequestParam("b_id") int b_id,RedirectAttributes redAt) {
+			
+			BookingDetails b_details=new BookingDetails();
+			b_details.setB_id(b_id);
+			
+			List<Map<String,Object>> cancelBooking=FutsalAdminService.cancelBooking(b_details);
+			
+			redAt.addAttribute("cancelled",true);
+			return "redirect:/AdminDashboard/home";
+			
 		}
 		
 		

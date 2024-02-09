@@ -266,12 +266,16 @@ public class futsalSuperAdmin {
 	@PostMapping("/addFutsal")
 	public String addFutsal(ModelMap model,@RequestParam("futsalName") String futsalName,@RequestParam("email") String email,
 			@RequestParam("contactNo") String contactNo,
-			@RequestParam("password") String password, @RequestParam("image") MultipartFile  imageFile) {
+			@RequestParam("address") String address
+			,@RequestParam("state") String state
+			,@RequestParam("password") String password, @RequestParam("image") MultipartFile  imageFile) {
 		
 		FutsalDetails f_details=new FutsalDetails();
 		f_details.setContactNo(contactNo);
 		f_details.setFutsalEmail(email);
 		f_details.setFutsalName(futsalName);
+		f_details.setAddress(address);
+		f_details.setState(state);
 //		f_details.setImage(imageFile);
 		
 		String hashedPassword=passwordEncoder.encode(password);

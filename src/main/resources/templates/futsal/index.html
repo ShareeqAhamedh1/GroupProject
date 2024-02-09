@@ -1,9 +1,4 @@
 <!DOCTYPE HTML>
-<!--
-	Hielo by TEMPLATED
-	templated.co @templatedco
-	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
--->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 <title>Futsal</title>
@@ -91,14 +86,32 @@
 						</div> -->
 						
 		
-		<!-- <div id="success-popup" class="popup" th:if="${loggedIn}">
+	<div id="success-popup" class="popup" th:if="${other_pay}">
+    <div class="popup-content">
+        <span class="close-popup"></span>
+        <h1 class="alert">Booking Success</h1>
+        <p style="color:green;">Stay tuned until Our admin will contact you soon</p>
+        <button class="button-box" id="continue-btn">continue</button>
+    </div>
+</div>	 
+
+<div id="success-popup" class="popup" th:if="${loggedIn}">
     <div class="popup-content">
         <span class="close-popup"></span>
         <h1 class="alert">Success!</h1>
         <p style="color:green;">You have successfully Logged In</p>
         <button class="button-box" id="continue-btn">continue</button>
     </div>
-</div>	 -->
+</div>
+
+<div id="success-popup" class="popup" th:if="${loggedOut}">
+    <div class="popup-content">
+        <span class="close-popup"></span>
+        <h1 class="alert">Logged Out</h1>
+        <p style="color:green;">Come again</p>
+        <button class="button-box" id="continue-btn">continue</button>
+    </div>
+</div>		
 
 		 
 		
@@ -112,10 +125,14 @@
 				<h2>Select any Sports</h2>
 			</header>
 			<div class="gallery">
-				<div th:each="sports : ${sportsDetails}">
+				<div th:each="sports : ${sportsDetails}" class="container">
 					<div class="image fit">
-						<a th:href="@{/futsal_home/booking(sports_type=${sports.typeofsport})}"><img th:src="${sports.first_image}" alt="" height="200"/></a>
+						<a th:href="@{/futsal_home/booking(sports_type=${sports.typeofsport})}"><img class="image" th:src="${sports.first_image}" alt="" height="200"/></a>
+					<div class="overlay">
+					    <div class="text" th:text="${sports.typeofsport}"></div>
+					  </div>
 					</div>
+					
 					
 				<!-- </div>
 				<div>
@@ -134,6 +151,7 @@
 					</div>
 				</div> -->
 			</div>
+		</div>
 		</div>
 	</section>
 	
@@ -158,9 +176,12 @@
 				<h2>Trending Places</h2>
 			</header>
 			<div class="gallery">
-				<div th:each="futsal : ${futsalDetails}">
+				<div th:each="futsal : ${futsalDetails}" class="container" >
 					<div class="image fit">
-						<a th:href="@{/futsal_home/bookings(futsal_id=${futsal.futsalid})}"><img th:src="${futsal.image}" alt="" height="200"/></a>
+						<a th:href="@{/futsal_home/bookings(futsal_id=${futsal.futsalid})}"><img class="image" th:src="${futsal.image}" alt="" height="200"/></a>
+					<div class="overlay">
+					    <div class="text" th:text="${futsal.fname}"></div>
+					  </div>
 					</div>
 				</div>
 				
